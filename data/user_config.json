@@ -1,15 +1,12 @@
 {
-  "budget_min": 20000,
-  "budget_max": 130000,
+  "budget_min": 300000,
+  "budget_max": 700000,
   "dpe_max": "D",
   "surface_min": 30,
   "zones": [
-    "75",
-    "92",
-    "94",
-    "91",
-    "77",
-    "78"
+    "Paris",
+    "Hauts-de-Seine",
+    "Val-de-Marne"
   ],
   "email": "khadhraoui.jalel@gmail.com",
   "report_time": "09:00",

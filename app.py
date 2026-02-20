@@ -161,15 +161,34 @@ def logs():
 
 @app.route('/api/scrape', methods=['POST'])
 def api_scrape():
-    """Lancer un scraping"""
+    """Lancer un scraping avec les paramètres de configuration"""
     try:
         data = request.json
         source = data.get('source', 'all')
         
+        # Utiliser les paramètres de configuration actuels
+        budget_min = SEARCH_CONFIG.get('budget_min', 200000)
+        budget_max = SEARCH_CONFIG.get('budget_max', 500000)
+        dpe_max = SEARCH_CONFIG.get('dpe_max', 'D')
+        zones = SEARCH_CONFIG.get('zones', ['Paris', 'Hauts-de-Seine', 'Val-de-Marne'])
+        
+        logger.info(f"🔍 Scraping avec paramètres: {budget_min}€-{budget_max}€, DPE<={dpe_max}, zones={zones}")
+        
         if source == 'all':
-            properties = scraper_manager.scrape_all()
+            properties = scraper_manager.scrape_all(
+                budget_min=budget_min,
+                budget_max=budget_max,
+                dpe_max=dpe_max,
+                zones=zones
+            )
         else:
-            properties = scraper_manager.scrape_single(source)
+            properties = scraper_manager.scrape_single(
+                source,
+                budget_min=budget_min,
+                budget_max=budget_max,
+                dpe_max=dpe_max,
+                zones=zones
+            )
         
         # Ajouter à la base
         new_count = 0
