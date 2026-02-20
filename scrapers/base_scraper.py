@@ -4,6 +4,7 @@ Scraper de base abstraite pour les différentes plateformes
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
+import time
 import requests
 from bs4 import BeautifulSoup
 from retrying import retry
@@ -19,16 +20,26 @@ class BaseScraper(ABC):
         self.config = config
         self.session = requests.Session()
         self.session.headers.update(config.get('headers', {}))
+        self.delay = config.get('delay_between_requests', 1)
+        self.last_request_time = 0
     
     @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def fetch_page(self, url, params=None):
-        """Récupérer le contenu d'une page avec retry"""
+        """Récupérer le contenu d'une page avec retry et délai"""
+        # Appliquer un délai avant la requête
+        elapsed = time.time() - self.last_request_time
+        if elapsed < self.delay:
+            time.sleep(self.delay - elapsed)
+        
         try:
+            logger.debug(f"Requesting {url} with params {params}")
             response = self.session.get(
                 url,
                 params=params,
-                timeout=self.config.get('timeout', 30)
+                timeout=self.config.get('timeout', 30),
+                allow_redirects=True
             )
+            self.last_request_time = time.time()
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
