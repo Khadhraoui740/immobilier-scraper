@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>⚙️ Configuration Système</h1>
+
+        <!-- Critères de Recherche -->
+        <div class="card">
+            <h2>🔍 Critères de Recherche</h2>
+            <form class="search-form" id="configForm">
+                <div class="form-group">
+                    <label>Budget Minimum (€)</label>
+                    <input type="number" id="budgetMin" value="200000" min="0" step="50000">
+                </div>
+
+                <div class="form-group">
+                    <label>Budget Maximum (€)</label>
+                    <input type="number" id="budgetMax" value="500000" min="0" step="50000">
+                </div>
+
+                <div class="form-group">
+                    <label>DPE Maximum</label>
+                    <select id="dpeMax">
+                        <option value="A">A - Très efficace</option>
+                        <option value="B">B - Efficace</option>
+                        <option value="C">C - Normal</option>
+                        <option value="D" selected>D - Décent</option>
+                        <option value="E">E - À améliorer</option>
+                        <option value="F">F - Mauvais</option>
+                        <option value="G">G - Très mauvais</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Surface Minimale (m²)</label>
+                    <input type="number" id="surfaceMin" value="30" min="0" step="5">
+                </div>
+            </form>
+
+            <h3 style="margin-top: 20px;">📍 Géolocalisation</h3>
+            <div class="button-group">
+                <div style="flex: 1;">
+                    <p style="margin-bottom: 10px;"><strong>Zones sélectionnées:</strong></p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="zone75" value="75" checked> Paris (75)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="zone92" value="92" checked> Hauts-de-Seine (92)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="zone94" value="94" checked> Val-de-Marne (94)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="zone91" value="91"> Essonne (91)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="zone77" value="77"> Seine-et-Marne (77)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="zone78" value="78"> Yvelines (78)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Email -->
+        <div class="card">
+            <h2>📧 Configuration Email</h2>
+            <form class="search-form">
+                <div class="form-group">
+                    <label>Email de réception</label>
+                    <input type="email" id="emailAddress" value="khadhraoui.jalel@gmail.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe App (Gmail)</label>
+                    <input type="password" id="emailPassword" placeholder="Mot de passe d'application">
+                    <small style="color: #666; margin-top: 5px; display: block;">
+                        <a href="https://myaccount.google.com/apppasswords" target="_blank">
+                            Générer un mot de passe d'application
+                        </a>
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>Heure du rapport quotidien</label>
+                    <input type="time" id="reportTime" value="09:00">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="emailNotifications" checked>
+                        Activer les notifications par email
+                    </label>
+                </div>
+            </form>
+
+            <button class="btn btn-primary" onclick="testEmail()" style="margin-top: 10px;">
+                <i class="fas fa-envelope"></i> Envoyer un email de test
+            </button>
+        </div>
+
+        <!-- Scrapers -->
+        <div class="card">
+            <h2>🌐 Configuration des Scrapers</h2>
+            <p>Timeout par défaut: 30 secondes</p>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Scraper</th>
+                        <th>URL</th>
+                        <th>Timeout (s)</th>
+                        <th>Actif</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="scrapersTable">
+                    <!-- Sera rempli par JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Base de Données -->
+        <div class="card">
+            <h2>💾 Base de Données</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div style="padding: 15px; background: #f5f5f5; border-radius: 5px;">
+                    <strong>Propriétés stockées:</strong><br>
+                    <span id="dbCount" style="font-size: 1.5rem; color: var(--primary);">--</span>
+                </div>
+                <div style="padding: 15px; background: #f5f5f5; border-radius: 5px;">
+                    <strong>Dernier scraping:</strong><br>
+                    <span id="lastScrape" style="font-size: 0.9rem;">--</span>
+                </div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="optimizeDB()">
+                    <i class="fas fa-tools"></i> Optimiser BD
+                </button>
+                <button class="btn btn-secondary" onclick="cleanupDB()">
+                    <i class="fas fa-trash"></i> Nettoyer doublons
+                </button>
+                <button class="btn btn-danger" onclick="resetDB()">
+                    <i class="fas fa-redo"></i> Réinitialiser
+                </button>
+            </div>
+        </div>
+
+        <!-- À propos -->
+        <div class="card">
+            <h2>ℹ️ À propos</h2>
+            <p>
+                <strong>Version:</strong> 1.0.0<br>
+                <strong>Développeur:</strong> Jalel Khadhraoui<br>
+                <strong>Contact:</strong> khadhraoui.jalel@gmail.com<br><br>
+                <a href="https://github.com/jalel-khadhraoui/immobilier-scraper" target="_blank" class="btn btn-primary">
+                    <i class="fas fa-github"></i> Voir sur GitHub
+                </a>
+            </p>
+        </div>
+
+        <!-- Boutons de sauvegarde -->
+        <div class="button-group" style="margin-top: 30px;">
+            <button class="btn btn-success btn-large" onclick="saveConfig()">
+                <i class="fas fa-save"></i> Enregistrer la configuration
+            </button>
+            <button class="btn btn-secondary btn-large" onclick="location.reload()">
+                <i class="fas fa-redo"></i> Réinitialiser les champs
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Charger la configuration
+async function loadConfig() {
+    try {
+        const result = await apiCall('/api/config/get', 'GET');
+        if (result && result.success) {
+            const config = result.config;
+            
+            // Remplir les champs
+            document.getElementById('budgetMin').value = config.budget_min || 200000;
+            document.getElementById('budgetMax').value = config.budget_max || 500000;
+            document.getElementById('dpeMax').value = config.dpe_max || 'D';
+            document.getElementById('surfaceMin').value = config.surface_min || 30;
+            document.getElementById('emailAddress').value = config.email || '';
+            document.getElementById('reportTime').value = config.report_time || '09:00';
+            document.getElementById('emailNotifications').checked = config.email_notifications !== false;
+            
+            // Zones
+            if (config.zones) {
+                document.querySelectorAll('[id^="zone"]').forEach(el => {
+                    el.checked = config.zones.includes(el.value);
+                });
+            }
+            
+            // Charger les stats
+            loadStats();
+        }
+    } catch (e) {
+        console.error('Erreur chargement config:', e);
+    }
+}
+
+// Sauvegarder la configuration
+async function saveConfig() {
+    const zones = [];
+    document.querySelectorAll('[id^="zone"]:checked').forEach(el => {
+        zones.push(el.value);
+    });
+    
+    const config = {
+        budget_min: parseInt(document.getElementById('budgetMin').value),
+        budget_max: parseInt(document.getElementById('budgetMax').value),
+        dpe_max: document.getElementById('dpeMax').value,
+        surface_min: parseInt(document.getElementById('surfaceMin').value),
+        email: document.getElementById('emailAddress').value,
+        email_password: document.getElementById('emailPassword').value,
+        report_time: document.getElementById('reportTime').value,
+        email_notifications: document.getElementById('emailNotifications').checked,
+        zones: zones
+    };
+    
+    const result = await apiCall('/api/config/save', 'POST', config);
+    
+    if (result && result.success) {
+        showNotification('Configuration enregistrée avec succès!', 'success');
+    } else {
+        showNotification('Erreur lors de la sauvegarde', 'error');
+    }
+}
+
+// Charger les statistiques
+async function loadStats() {
+    try {
+        const result = await apiCall('/api/stats', 'GET');
+        if (result && result.success) {
+            document.getElementById('dbCount').textContent = result.stats.total_properties || 0;
+            document.getElementById('lastScrape').textContent = result.stats.last_update || '--';
+        }
+    } catch (e) {
+        console.log('Erreur chargement stats');
+    }
+}
+
+// Optimiser la BD
+async function optimizeDB() {
+    if (!confirm('Ceci peut prendre quelques secondes...')) return;
+    
+    const result = await apiCall('/api/db/optimize', 'POST');
+    if (result && result.success) {
+        showNotification('Base de données optimisée!', 'success');
+        loadStats();
+    }
+}
+
+// Nettoyer les doublons
+async function cleanupDB() {
+    if (!confirm('Ceci supprimera les doublons. Continuer?')) return;
+    
+    const result = await apiCall('/api/db/cleanup', 'POST');
+    if (result && result.success) {
+        showNotification(result.message || 'Nettoyage effectué!', 'success');
+        loadStats();
+    }
+}
+
+// Réinitialiser la BD
+async function resetDB() {
+    if (!confirm('⚠️ ATTENTION: Ceci supprimera TOUTES les données!\n\nÊtes-vous vraiment sûr?')) return;
+    
+    const result = await apiCall('/api/db/reset', 'POST');
+    if (result && result.success) {
+        showNotification('Base de données réinitialisée!', 'success');
+        setTimeout(() => location.reload(), 1000);
+    }
+}
+
+// Charger au démarrage
+document.addEventListener('DOMContentLoaded', loadConfig);
+</script>
+{% endblock %}

@@ -38,23 +38,28 @@ analyzer = PropertyAnalyzer()
 def dashboard():
     """Page d'accueil - Dashboard"""
     try:
-        stats = db.get_statistics()
-        summary = analyzer.get_summary_stats(24)
-        properties = db.get_new_properties(hours=24)
+        stats = db.get_statistics() or {}
+        summary = analyzer.get_summary_stats(24) or {}
+        properties = db.get_new_properties(hours=24) or []
+        
+        # Valeurs par défaut si aucune propriété
+        avg_price = stats.get('avg_price') or 0
+        min_price = stats.get('min_price') or 0
+        max_price = stats.get('max_price') or 0
         
         data = {
             'total_properties': stats.get('total_properties', 0),
-            'avg_price': f"{stats.get('avg_price', 0):,.0f}",
-            'new_24h': len(properties),
+            'avg_price': f"{int(avg_price):,.0f}" if avg_price else "0",
+            'new_24h': len(properties) if properties else 0,
             'by_source': stats.get('by_source', {}),
             'by_status': stats.get('by_status', {}),
-            'price_range': f"{stats.get('min_price', 0):,} - {stats.get('max_price', 0):,}"
+            'price_range': f"{int(min_price):,} - {int(max_price):,}" if (min_price or max_price) else "N/A"
         }
         
         return render_template('dashboard.html', **data)
     except Exception as e:
         logger.error(f"Erreur dashboard: {e}")
-        return "Erreur", 500
+        return "Erreur serveur", 500
 
 
 @app.route('/properties')
@@ -127,6 +132,12 @@ def statistics():
     """Page des statistiques"""
     stats = db.get_statistics()
     return render_template('statistics.html', stats=stats)
+
+
+@app.route('/config')
+def config_page():
+    """Page de configuration"""
+    return render_template('config.html')
 
 
 @app.route('/logs')
@@ -429,6 +440,113 @@ def api_test_alert():
         })
     except Exception as e:
         logger.error(f"Erreur test alert: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ============================================================================
+# API - CONFIGURATION
+# ============================================================================
+
+@app.route('/api/config/get', methods=['GET'])
+def api_get_config():
+    """Récupérer la configuration actuelle"""
+    try:
+        config = {
+            'budget_min': SEARCH_CONFIG.get('budget_min', 200000),
+            'budget_max': SEARCH_CONFIG.get('budget_max', 500000),
+            'dpe_max': SEARCH_CONFIG.get('dpe_max', 'D'),
+            'surface_min': 30,
+            'zones': SEARCH_CONFIG.get('zones', ['Paris', 'Hauts-de-Seine', 'Val-de-Marne']),
+            'email': 'khadhraoui.jalel@gmail.com',
+            'report_time': '09:00',
+            'email_notifications': True
+        }
+        
+        return jsonify({
+            'success': True,
+            'config': config
+        })
+    except Exception as e:
+        logger.error(f"Erreur get config: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/config/save', methods=['POST'])
+def api_save_config():
+    """Sauvegarder la configuration"""
+    try:
+        data = request.json
+        
+        SEARCH_CONFIG['budget_min'] = data.get('budget_min', 200000)
+        SEARCH_CONFIG['budget_max'] = data.get('budget_max', 500000)
+        SEARCH_CONFIG['dpe_max'] = data.get('dpe_max', 'D')
+        SEARCH_CONFIG['zones'] = data.get('zones', [])
+        
+        config_file = Path(__file__).parent / 'data' / 'user_config.json'
+        config_file.parent.mkdir(exist_ok=True)
+        
+        user_config = {
+            'budget_min': data.get('budget_min'),
+            'budget_max': data.get('budget_max'),
+            'dpe_max': data.get('dpe_max'),
+            'surface_min': data.get('surface_min'),
+            'zones': data.get('zones'),
+            'email': data.get('email'),
+            'report_time': data.get('report_time'),
+            'email_notifications': data.get('email_notifications')
+        }
+        
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(user_config, f, ensure_ascii=False, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Configuration enregistrée avec succès'
+        })
+    except Exception as e:
+        logger.error(f"Erreur save config: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/db/optimize', methods=['POST'])
+def api_db_optimize():
+    """Optimiser la base de données"""
+    try:
+        db.optimize()
+        return jsonify({
+            'success': True,
+            'message': 'Base de données optimisée'
+        })
+    except Exception as e:
+        logger.error(f"Erreur optimize db: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/db/cleanup', methods=['POST'])
+def api_db_cleanup():
+    """Nettoyer les doublons"""
+    try:
+        removed = db.cleanup_duplicates()
+        return jsonify({
+            'success': True,
+            'message': f'{removed} doublon(s) supprimé(s)'
+        })
+    except Exception as e:
+        logger.error(f"Erreur cleanup db: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/db/reset', methods=['POST'])
+def api_db_reset():
+    """Réinitialiser la base de données"""
+    try:
+        db.reset()
+        return jsonify({
+            'success': True,
+            'message': 'Base de données réinitialisée'
+        })
+    except Exception as e:
+        logger.error(f"Erreur reset db: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
