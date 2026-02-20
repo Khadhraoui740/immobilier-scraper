@@ -40,28 +40,22 @@ DATABASE_CONFIG = {
 SCRAPERS_CONFIG = {
     'seloger': {
         'name': 'SeLoger',
-        'url': 'https://www.seloger.com/acheter/',
+        'url': 'https://www.seloger.com/list.htm',
+        'api_url': 'https://api.seloger.com/search',
         'enabled': True,
         'timeout': 30,
         'delay_between_requests': 2,
+        'use_api': True,
         'headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Cache-Control': 'max-age=0'
+            'Accept': 'application/json',
+            'Accept-Language': 'fr-FR,fr;q=0.9'
         }
     },
     'pap': {
         'name': 'PAP',
         'url': 'https://www.pap.fr/immobilier/annonces/',
-        'enabled': True,
+        'enabled': False,
         'timeout': 30,
         'delay_between_requests': 2,
         'headers': {
@@ -82,22 +76,15 @@ SCRAPERS_CONFIG = {
     'leboncoin': {
         'name': 'LeBonCoin',
         'url': 'https://www.leboncoin.fr/immobilier/offres/',
-        'enabled': True,
+        'api_url': 'https://api.leboncoin.fr/finder/search',
+        'enabled': False,
         'timeout': 30,
         'delay_between_requests': 3,
+        'use_api': True,
         'headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Cache-Control': 'max-age=0',
-            'Referer': 'https://www.google.com/'
+            'Accept': 'application/json',
+            'Accept-Language': 'fr-FR,fr;q=0.9'
         }
     },
     'bienici': {

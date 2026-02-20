@@ -8,6 +8,7 @@ from .seloger_scraper import SeLogerScraper
 from .pap_scraper import PAPScraper
 from .leboncoin_scraper import LeBonCoinScraper
 from .bienici_scraper import BienIciScraper
+from .test_scraper import TestScraper
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,9 @@ class ScraperManager:
         
         if SCRAPERS_CONFIG.get('bienici', {}).get('enabled', False):
             self.scrapers['bienici'] = BienIciScraper(SCRAPERS_CONFIG['bienici'])
+        
+        # Ajouter le scraper de test pour la démo
+        self.scrapers['test'] = TestScraper({'name': 'Test', 'timeout': 5})
     
     def scrape_all(self, budget_min=None, budget_max=None, dpe_max=None, zones=None):
         """Scraper toutes les plateformes en parallèle"""

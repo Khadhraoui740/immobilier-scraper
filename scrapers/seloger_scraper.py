@@ -108,9 +108,11 @@ class SeLogerScraper(BaseScraper):
     
     def _build_search_url(self, zone_code, budget_min, budget_max):
         """Construire l'URL de recherche"""
-        return (f"{self.base_url}paris_75,hauts-de-seine_92,val-de-marne_94/"
-                f"achat/appartement,maison/?"
-                f"budgetMin={budget_min}&budgetMax={budget_max}")
+        # SeLoger moderne - utiliser l'API ou page directe
+        return (f"{self.base_url}?search=true&programs=1&new=0&"
+                f"budgetMin={budget_min}&budgetMax={budget_max}&"
+                f"qsVersion=1.0&multiline=0&"
+                f"places=[\"Ile-de-France\"]")
     
     def _get_zone_code(self, zone):
         """Obtenir le code de zone"""
