@@ -42,7 +42,7 @@ SCRAPERS_CONFIG = {
         'name': 'SeLoger',
         'url': 'https://www.seloger.com/list.htm',
         'api_url': 'https://api.seloger.com/search',
-        'enabled': True,
+        'enabled': False,
         'timeout': 30,
         'delay_between_requests': 2,
         'use_api': True,
