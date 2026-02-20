@@ -1,7 +1,7 @@
 {
-  "budget_min": 200000,
-  "budget_max": 500000,
-  "dpe_max": "G",
+  "budget_min": 20000,
+  "budget_max": 130000,
+  "dpe_max": "D",
   "surface_min": 30,
   "zones": [
     "75",
