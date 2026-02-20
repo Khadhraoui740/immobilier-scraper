@@ -1,0 +1,17 @@
+{
+  "budget_min": 200000,
+  "budget_max": 500000,
+  "dpe_max": "G",
+  "surface_min": 30,
+  "zones": [
+    "75",
+    "92",
+    "94",
+    "91",
+    "77",
+    "78"
+  ],
+  "email": "khadhraoui.jalel@gmail.com",
+  "report_time": "09:00",
+  "email_notifications": true
+}

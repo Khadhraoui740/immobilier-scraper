@@ -305,3 +305,75 @@ class Database:
         stats['max_price'] = max_price
         
         return stats
+    
+    def get_statistics_by_date(self, start_date, end_date):
+        """Récupérer les statistiques filtrées par date
+        
+        Args:
+            start_date: datetime ou string au format 'YYYY-MM-DD HH:MM:SS'
+            end_date: datetime ou string au format 'YYYY-MM-DD HH:MM:SS'
+        
+        Returns:
+            dict avec statistiques filtrées par plage de dates
+        """
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        # Convertir en string si datetime
+        if hasattr(start_date, 'isoformat'):
+            start_date = start_date.isoformat()
+        if hasattr(end_date, 'isoformat'):
+            end_date = end_date.isoformat()
+        
+        stats = {}
+        
+        # Total des annonces dans la plage
+        cursor.execute('''
+            SELECT COUNT(*) FROM properties
+            WHERE created_at BETWEEN ? AND ?
+        ''', (start_date, end_date))
+        stats['total_properties'] = cursor.fetchone()[0]
+        
+        # Par source
+        cursor.execute('''
+            SELECT source, COUNT(*) FROM properties
+            WHERE created_at BETWEEN ? AND ?
+            GROUP BY source
+        ''', (start_date, end_date))
+        stats['by_source'] = {row[0]: row[1] for row in cursor.fetchall()}
+        
+        # Par statut
+        cursor.execute('''
+            SELECT status, COUNT(*) FROM properties
+            WHERE created_at BETWEEN ? AND ?
+            GROUP BY status
+        ''', (start_date, end_date))
+        stats['by_status'] = {row[0]: row[1] for row in cursor.fetchall()}
+        
+        # Moyenne des prix
+        cursor.execute('''
+            SELECT AVG(price) FROM properties
+            WHERE created_at BETWEEN ? AND ?
+        ''', (start_date, end_date))
+        result = cursor.fetchone()
+        stats['avg_price'] = result[0] if result[0] is not None else 0
+        
+        # Prix min/max
+        cursor.execute('''
+            SELECT MIN(price), MAX(price) FROM properties
+            WHERE created_at BETWEEN ? AND ? AND price IS NOT NULL
+        ''', (start_date, end_date))
+        min_price, max_price = cursor.fetchone()
+        stats['min_price'] = min_price if min_price is not None else 0
+        stats['max_price'] = max_price if max_price is not None else 0
+        
+        # Surface moyenne
+        cursor.execute('''
+            SELECT AVG(surface) FROM properties
+            WHERE created_at BETWEEN ? AND ? AND surface IS NOT NULL
+        ''', (start_date, end_date))
+        result = cursor.fetchone()
+        stats['avg_surface'] = result[0] if result[0] is not None else 0
+        
+        conn.close()
+        return stats

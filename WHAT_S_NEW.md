@@ -98,7 +98,15 @@ Cochez les zones à inclure:
 ---
 
 ## 📧 TESTER L'EMAIL
+# Option 1: Menu interactif
+python open_browser.py
 
+# Option 2: Direct
+python app.py
+# Puis: http://localhost:5000/config
+
+# Option 3: Docker
+docker-compose up -d
 1. Remplissez les paramètres email
 2. Bouton: **"Envoyer un email de test"**
 3. Vérifiez votre boîte
