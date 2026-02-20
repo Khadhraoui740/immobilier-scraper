@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Scraping Immobilier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i> Admin Immobilier
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Dashboard</a></li>
+                <li><a href="/properties" class="nav-link">Propriétés</a></li>
+                <li><a href="/search" class="nav-link">Recherche</a></li>
+                <li><a href="/sites" class="nav-link">Sites</a></li>
+                <li><a href="/scheduler" class="nav-link">Planificateur</a></li>
+                <li><a href="/statistics" class="nav-link">Stats</a></li>
+                <li><a href="/logs" class="nav-link">Logs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <footer class="footer">
+        <p>&copy; 2026 Scraping Immobilier | Développé par Jalel Khadhraoui</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

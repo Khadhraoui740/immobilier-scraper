@@ -1,0 +1,187 @@
+"""
+Feuille de route et améliorations futures
+"""
+
+ROADMAP = """
+╔════════════════════════════════════════════════════════════════════════════╗
+║         FEUILLE DE ROUTE - AMÉLIORATIONS FUTURES                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🔵 VERSION 1.0 (COMPLÉTÉE) ✅
+═════════════════════════════════════════════════════════════════════════════
+✓ Scrapers du 3 plateformes (SeLoger, PAP, LeBonCoin)
+✓ Base de données SQLite complète
+✓ Système d'alertes email HTML
+✓ Planificateur automatisé (APScheduler)
+✓ Interface CLI complète
+✓ Gestion des favoris et statuts
+✓ Filtrage avancé et recherche
+✓ Exportation JSON/CSV
+✓ Analyse et rapports
+✓ Logs détaillés
+✓ Outils d'administration
+✓ Documentation complète
+
+
+🟡 VERSION 1.1 (COURT TERME)
+═════════════════════════════════════════════════════════════════════════════
+[ ] Interface Web avec Flask/FastAPI
+    - Dashboard en temps réel
+    - Gestion des propriétés
+    - Visualisation des données
+    
+[ ] Support de 3 nouvelles plateformes
+    - Immobilier.com
+    - Logic-immo
+    - Guy Hoquet
+    
+[ ] Notifications SMS
+    - Intégration Twilio
+    - Alertes prioritaires par SMS
+    
+[ ] Amélioration des scrapers
+    - Détection des prix erronés
+    - Récupération des images en HD
+    - Extraction du GES complet
+
+
+🟡 VERSION 1.2 (MOYEN TERME)
+═════════════════════════════════════════════════════════════════════════════
+[ ] Machine Learning
+    - Recommandations de propriétés
+    - Prédiction des prix
+    - Détection d'anomalies
+    
+[ ] Intégration Géographique
+    - Carte interactive (Folium/Leaflet)
+    - Recherche par zone géographique
+    - Temps de trajet pour lieux clés
+    - Quartiers populaires
+    
+[ ] Gestion Multi-Utilisateurs
+    - Authentification
+    - Profils personnalisés
+    - Alertes par profil
+    
+[ ] Export avancé
+    - PDF détaillé
+    - Excel avec graphiques
+    - Rapports automatisés
+    
+[ ] API REST
+    - Consultation des propriétés
+    - Gestion des alertes
+    - Webhooks
+
+
+🟡 VERSION 2.0 (LONG TERME)
+═════════════════════════════════════════════════════════════════════════════
+[ ] Application Mobile
+    - iOS et Android
+    - Notifications push
+    - Augmented Reality (AR)
+    
+[ ] Comparaison avec historique
+    - Évolution des prix
+    - Tendances du marché
+    - Prévisions
+    
+[ ] Intégration avec services tiers
+    - Calcul des mortgages
+    - Vérification crédit
+    - Agendas immobiliers
+    
+[ ] Blockchain/NFT
+    - Certificats de propriété
+    - Transactions sécurisées
+    
+[ ] IA Avancée
+    - ChatBot pour questions immobilières
+    - Négociation assistée par IA
+    - Valuation automatique
+
+
+═════════════════════════════════════════════════════════════════════════════
+PRIORITÉS IMMÉDIATES
+═════════════════════════════════════════════════════════════════════════════
+
+1. Interface Web (Impact: 🔴 Critique pour UX)
+   Time: ~2-3 semaines
+   
+2. Plateforme Immobilier.com (Impact: 🟠 Augmente couverture)
+   Time: ~1 semaine
+   
+3. Machine Learning basique (Impact: 🟠 Évite recherches manuelles)
+   Time: ~2 semaines
+   
+4. Notifications SMS (Impact: 🟡 Améliore réactivité)
+   Time: ~3-4 jours
+   
+5. Carte interactive (Impact: 🟡 Aide visualisation)
+   Time: ~1-2 semaines
+
+
+═════════════════════════════════════════════════════════════════════════════
+DÉFIS TECHNIQUES À ANTICIPER
+═════════════════════════════════════════════════════════════════════════════
+
+1. Protection anti-bot
+   - ✓ Délais entre requêtes (IMPLÉMENTÉ)
+   - □ Rotation de proxies (À FAIRE)
+   - □ Rotation de User-Agents (À FAIRE)
+   - □ Gestion des CAPTCHAs (À FAIRE)
+
+2. Performances
+   - ✓ Scraping parallèle (IMPLÉMENTÉ)
+   - □ Cache Redis (À FAIRE)
+   - □ Base de données distribuée (À FAIRE)
+
+3. Maintenance
+   - ✓ Logs détaillés (IMPLÉMENTÉ)
+   - ✓ Sauvegarde auto (IMPLÉMENTÉ)
+   - □ Monitoring/Alertes système (À FAIRE)
+   - □ Auto-repair des erreurs (À FAIRE)
+
+4. Données
+   - ✓ Stockage SQLite (IMPLÉMENTÉ)
+   - □ Migration vers PostgreSQL (À FAIRE)
+   - □ Synchronisation multi-serveur (À FAIRE)
+
+
+═════════════════════════════════════════════════════════════════════════════
+MÉTRIQUES DE SUCCÈS
+═════════════════════════════════════════════════════════════════════════════
+
+Utilisation:
+- 1000+ propriétés indexées ✓
+- 5+ plateforme scrapées
+- 100% uptime du scraper
+
+Qualité:
+- <1% d'erreurs de parsing
+- <10 secondes/page scrapée
+- <100MB base de données
+
+Utilisateurs:
+- Interface intuitive
+- <5s temps de chargement
+- Support multi-langues
+
+
+═════════════════════════════════════════════════════════════════════════════
+CONTRIBUTION ET FEEDBACK
+═════════════════════════════════════════════════════════════════════════════
+
+Pour suggérer des améliorations:
+1. Créer une issue sur GitHub
+2. Envoyer un email à: khadhraoui.jalel@gmail.com
+3. Proposer une pull request
+
+Utilisateurs intéressés:
+- Investisseurs immobiliers
+- Primo-accédants
+- Agents immobiliers
+- Chercheurs (données de marché)
+"""
+
+print(ROADMAP)

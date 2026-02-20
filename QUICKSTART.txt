@@ -1,0 +1,189 @@
+🏠 SYSTÈME DE SCRAPING IMMOBILIER - GUIDE DE DÉMARRAGE RAPIDE
+
+================================================================================
+ÉTAPE 1: Installation
+================================================================================
+
+1. Créer un environnement virtuel:
+   python -m venv venv
+   venv\Scripts\activate
+
+2. Installer les dépendances:
+   pip install -r requirements.txt
+
+3. Configurer les variables d'environnement:
+   - Copier .env.example vers .env
+   - Éditer .env avec:
+     * EMAIL_PASSWORD: Votre mot de passe d'application Gmail
+     * Les autres paramètres (optionnels)
+
+4. Générer une clé d'application Gmail:
+   - Aller sur: https://myaccount.google.com/apppasswords
+   - Générer un mot de passe pour "Mail" et "Windows"
+   - Copier-coller dans EMAIL_PASSWORD dans .env
+
+================================================================================
+ÉTAPE 2: Configuration Initiale
+================================================================================
+
+Exécuter le script de configuration:
+   python setup.py
+
+Cela va:
+✓ Créer les répertoires nécessaires
+✓ Initialiser la base de données
+✓ Tester la connexion email (optionnel)
+
+================================================================================
+ÉTAPE 3: Premier Scraping
+================================================================================
+
+Option 1 - Scraping simple (une fois):
+   python main.py
+
+Option 2 - Démarrer le planificateur automatique:
+   python scheduler.py
+
+Option 3 - Utiliser l'interface CLI:
+   python cli.py help
+
+================================================================================
+COMMANDES COURANTES
+================================================================================
+
+SCRAPING:
+   python main.py                      # Scraper toutes les plateformes
+   python cli.py scrape seloger        # Scraper SeLoger uniquement
+   python cli.py scrape pap            # Scraper PAP uniquement
+   python cli.py scrape leboncoin      # Scraper LeBonCoin uniquement
+
+GESTION DES PROPRIÉTÉS:
+   python cli.py list                  # Afficher les propriétés
+   python cli.py list --limit 50       # Afficher 50 propriétés
+   python cli.py stats                 # Voir les statistiques
+
+FAVORIS ET STATUTS:
+   python cli.py favorite --add <ID>   # Ajouter un favori
+   python cli.py favorite --list       # Voir les favoris
+   python cli.py status --list         # Voir les statuts disponibles
+   python cli.py status --set <ID> visité  # Changer le statut
+
+ALERTES EMAIL:
+   python cli.py email --send --new    # Envoyer nouveau propriétés
+   python cli.py email --send --report # Envoyer le rapport
+
+DÉMONSTRATION:
+   python demo.py                      # Lancer les démos
+
+PLANIFICATEUR:
+   python scheduler.py                 # Scraping automatique (2h) + rapport (9h)
+
+================================================================================
+CONFIGURATION DES CRITÈRES
+================================================================================
+
+Éditer le fichier config.py pour modifier:
+
+Budget:
+   SEARCH_CONFIG['budget_min'] = 200000
+   SEARCH_CONFIG['budget_max'] = 500000
+
+Zones:
+   SEARCH_CONFIG['zones'] = ['Paris', 'Hauts-de-Seine', 'Val-de-Marne']
+
+DPE:
+   SEARCH_CONFIG['dpe_max'] = 'D'
+
+Placements (activer/désactiver):
+   SCRAPERS_CONFIG['seloger']['enabled'] = True/False
+   SCRAPERS_CONFIG['pap']['enabled'] = True/False
+   SCRAPERS_CONFIG['leboncoin']['enabled'] = True/False
+
+Intervalle de scraping:
+   SCHEDULER_CONFIG['interval_hours'] = 2
+
+Heure des rapports:
+   NOTIFICATION_CONFIG['send_time'] = '09:00'
+
+================================================================================
+STRUCTURE DE LA BASE DE DONNÉES
+================================================================================
+
+La base de données (database/immobilier.db) contient:
+
+properties:            Les annonces immobilières
+↳ id, title, price, location, surface, rooms, dpe, url, source, etc.
+
+property_history:      Historique des modifications
+↳ Suivi des changements de prix et de statut
+
+searches:              Recherches sauvegardées
+↳ Critères et résultats de recherches
+
+alerts:                Alertes envoyées
+↳ Historique des notifications email
+
+================================================================================
+STATUTS DE PROPRIÉTÉS
+================================================================================
+
+disponible    = Annonce actuellement active
+contacté      = Vous avez pris contact avec le vendeur
+visité        = Vous avez visité le bien
+rejeté        = Propriété ne correspond pas aux besoins
+acheté        = Achat finalisé
+
+================================================================================
+DÉPANNAGE
+================================================================================
+
+❌ Email non reçu:
+   □ Vérifier que EMAIL_PASSWORD est correctement défini dans .env
+   □ Vérifier que l'authentification 2FA est activée sur Gmail
+   □ Consulter les logs: logs/immobilier-scraper.log
+
+❌ Pas de données scrapées:
+   □ Vérifier la connexion Internet
+   □ Consulter les logs pour voir les erreurs
+   □ Vérifier que les URLs des plateformes sont correctes
+
+❌ Base de données corrompue:
+   □ Supprimer database/immobilier.db
+   □ Relancer le script (recréera la BD)
+
+================================================================================
+DOCUMENTATION
+================================================================================
+
+Pour plus de détails, consulter:
+   - README.md                      : Documentation complète
+   - config.py                      : Configuration détaillée
+   - logs/immobilier-scraper.log    : Logs d'exécution
+
+================================================================================
+EXEMPLES D'UTILISATION
+================================================================================
+
+Exemple 1: Scraper et recevoir une alerte par email
+   python main.py
+   
+Exemple 2: Scraper toutes les 2h et rapports quotidiens
+   python scheduler.py
+   
+Exemple 3: Voir les meilleures affaires (prix/m²)
+   python cli.py list --status disponible --limit 100
+   
+Exemple 4: Marquer comme visité
+   python cli.py status --set <ID> visité
+
+Exemple 5: Générer un rapport
+   python cli.py email --send --report
+
+================================================================================
+SUPPORT ET CONTACT
+================================================================================
+
+Email: khadhraoui.jalel@gmail.com
+Répertoire: C:\Users\jaleleddinekhadhraou\immobilier-scraper
+
+================================================================================

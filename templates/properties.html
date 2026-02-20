@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>Gestion des Propriétés</h1>
+
+        <div class="filter-bar">
+            <input type="text" id="search" placeholder="Rechercher..." class="filter-input">
+            <select id="status-filter" class="filter-input">
+                <option value="">Tous les statuts</option>
+                <option value="disponible">Disponible</option>
+                <option value="contacté">Contacté</option>
+                <option value="visité">Visité</option>
+                <option value="rejeté">Rejeté</option>
+            </select>
+        </div>
+
+        <div class="properties-grid">
+            {% for prop in properties %}
+            <div class="property-card">
+                <div class="property-header">
+                    <h3>{{ prop.title }}</h3>
+                    <span class="badge badge-{{ prop.source|lower }}">{{ prop.source }}</span>
+                </div>
+                
+                <div class="property-body">
+                    <p><strong>Prix:</strong> {{ prop.price }}</p>
+                    <p><strong>Localisation:</strong> {{ prop.location }}</p>
+                    <p><strong>Statut:</strong> {{ prop.status }}</p>
+                    <p><strong>DPE:</strong> <span class="dpe dpe-{{ prop.dpe|lower }}">{{ prop.dpe }}</span></p>
+                </div>
+
+                <div class="property-footer">
+                    <a href="{{ prop.url }}" target="_blank" class="btn btn-sm btn-primary">
+                        <i class="fas fa-external-link-alt"></i> Voir
+                    </a>
+                    <button class="btn btn-sm btn-secondary" onclick="editProperty('{{ prop.id }}')">
+                        <i class="fas fa-edit"></i> Éditer
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="?page={{ page - 1 }}" class="btn btn-sm">← Précédent</a>
+            {% endif %}
+            
+            <span>Page {{ page }} / {{ pages }}</span>
+            
+            {% if page < pages %}
+            <a href="?page={{ page + 1 }}" class="btn btn-sm">Suivant →</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function editProperty(id) {
+    fetch(`/api/property/${id}`)
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const prop = data.property;
+            const newStatus = prompt('Nouveau statut:', prop.status);
+            if (newStatus) {
+                fetch(`/api/property/${id}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({status: newStatus})
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

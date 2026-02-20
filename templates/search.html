@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>Recherche Avancée</h1>
+
+        <div class="search-form">
+            <div class="form-group">
+                <label>Budget Min</label>
+                <input type="number" id="priceMin" placeholder="200000" value="200000">
+            </div>
+            <div class="form-group">
+                <label>Budget Max</label>
+                <input type="number" id="priceMax" placeholder="500000" value="500000">
+            </div>
+            <div class="form-group">
+                <label>DPE Maximum</label>
+                <select id="dpeMax">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D" selected>D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Localisation</label>
+                <input type="text" id="location" placeholder="Paris">
+            </div>
+            <div class="form-group">
+                <label>Statut</label>
+                <select id="status">
+                    <option value="">Tous</option>
+                    <option value="disponible">Disponible</option>
+                    <option value="contacté">Contacté</option>
+                    <option value="visité">Visité</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary btn-large" onclick="doSearch()">
+                <i class="fas fa-search"></i> Rechercher
+            </button>
+        </div>
+
+        <div id="results" class="results">
+            <p>Entrez vos critères et cliquez sur "Rechercher"</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function doSearch() {
+    const filters = {
+        price_min: parseInt(document.getElementById('priceMin').value),
+        price_max: parseInt(document.getElementById('priceMax').value),
+        dpe_max: document.getElementById('dpeMax').value,
+        location: document.getElementById('location').value,
+        status: document.getElementById('status').value
+    };
+
+    fetch('/api/search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(filters)
+    })
+    .then(r => r.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('results');
+        if (data.success && data.properties.length > 0) {
+            let html = `<h3>${data.count} résultats trouvés</h3>`;
+            html += '<div class="results-list">';
+            data.properties.forEach(p => {
+                html += `
+                    <div class="result-item">
+                        <strong>${p.title}</strong><br>
+                        Prix: ${p.price}€ | Surface: ${p.surface}m² | DPE: ${p.dpe}<br>
+                        Source: ${p.source}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        } else {
+            resultsDiv.innerHTML = '<p>Aucun résultat trouvé</p>';
+        }
+    })
+    .catch(e => document.getElementById('results').innerHTML = `<p>Erreur: ${e}</p>`);
+}
+</script>
+{% endblock %}

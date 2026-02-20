@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>Statistiques Détaillées</h1>
+
+        <div class="stats-container">
+            <div class="stat-card large">
+                <div class="stat-value">{{ stats.total_properties }}</div>
+                <div class="stat-label">Total Propriétés</div>
+            </div>
+            
+            <div class="stat-card large">
+                <div class="stat-value">{{ "%.0f"|format(stats.avg_price) }}</div>
+                <div class="stat-label">Prix Moyen (€)</div>
+            </div>
+            
+            <div class="stat-card large">
+                <div class="stat-value">{{ stats.min_price }}</div>
+                <div class="stat-label">Prix Minimum (€)</div>
+            </div>
+            
+            <div class="stat-card large">
+                <div class="stat-value">{{ stats.max_price }}</div>
+                <div class="stat-label">Prix Maximum (€)</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card">
+                <h2>Distribution par Source</h2>
+                <table class="table">
+                    <thead>
+                        <tr><th>Source</th><th>Nombre</th><th>Pourcentage</th></tr>
+                    </thead>
+                    <tbody>
+                        {% set total = stats.total_properties %}
+                        {% for source, count in stats.by_source.items() %}
+                        <tr>
+                            <td>{{ source }}</td>
+                            <td>{{ count }}</td>
+                            <td>{{ "%.1f"|format(count/total*100) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Distribution par Statut</h2>
+                <table class="table">
+                    <thead>
+                        <tr><th>Statut</th><th>Nombre</th><th>Pourcentage</th></tr>
+                    </thead>
+                    <tbody>
+                        {% set total = stats.total_properties %}
+                        {% for status, count in stats.by_status.items() %}
+                        <tr>
+                            <td>{{ status }}</td>
+                            <td>{{ count }}</td>
+                            <td>{{ "%.1f"|format(count/total*100) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

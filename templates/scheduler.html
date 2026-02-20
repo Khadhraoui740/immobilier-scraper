@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>Planificateur de Tâches</h1>
+
+        <div class="scheduler-container">
+            <div class="card">
+                <h2>Configuration du Scraping</h2>
+                
+                <div class="form-group">
+                    <label>Intervalle de scraping (heures)</label>
+                    <select id="interval">
+                        <option value="1">Chaque heure</option>
+                        <option value="2" selected>Chaque 2 heures</option>
+                        <option value="3">Chaque 3 heures</option>
+                        <option value="4">Chaque 4 heures</option>
+                        <option value="6">Chaque 6 heures</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Heure du rapport quotidien</label>
+                    <input type="time" id="reportTime" value="09:00">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enableNotifications" checked>
+                        Activer les notifications email
+                    </label>
+                </div>
+
+                <button class="btn btn-primary btn-large" onclick="saveScheduler()">
+                    <i class="fas fa-save"></i> Enregistrer la Configuration
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>État du Planificateur</h2>
+                
+                <div class="status-box" id="schedulerStatus">
+                    <p><strong>État:</strong> <span id="runningStatus">Vérification...</span></p>
+                    <p><strong>Dernier scraping:</strong> <span id="lastRun">-</span></p>
+                    <p><strong>Prochain scraping:</strong> <span id="nextRun">-</span></p>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="startScheduler()">
+                        <i class="fas fa-play"></i> Démarrer
+                    </button>
+                    <button class="btn btn-danger" onclick="stopScheduler()">
+                        <i class="fas fa-stop"></i> Arrêter
+                    </button>
+                    <button class="btn btn-primary" onclick="runNow()">
+                        <i class="fas fa-flash"></i> Scraper Maintenant
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Tâches Programmées</h2>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tâche</th>
+                            <th>Type</th>
+                            <th>Fréquence</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Scraping Web</td>
+                            <td>Automatique</td>
+                            <td>Toutes les 2 heures</td>
+                            <td><span class="badge badge-success">Actif</span></td>
+                        </tr>
+                        <tr>
+                            <td>Rapport Quotidien</td>
+                            <td>Email</td>
+                            <td>09:00 chaque jour</td>
+                            <td><span class="badge badge-success">Actif</span></td>
+                        </tr>
+                        <tr>
+                            <td>Nettoyage BD</td>
+                            <td>Automatique</td>
+                            <td>Hebdomadaire</td>
+                            <td><span class="badge badge-warning">Planifié</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Historique des Exécutions</h2>
+                
+                <div class="execution-log">
+                    <div class="log-entry">
+                        <span class="timestamp">2024-02-20 12:00</span>
+                        <span class="status success">✓ Succès</span>
+                        <span class="message">15 nouvelles annonces trouvées</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="timestamp">2024-02-20 10:00</span>
+                        <span class="status success">✓ Succès</span>
+                        <span class="message">8 nouvelles annonces trouvées</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="timestamp">2024-02-20 08:00</span>
+                        <span class="status success">✓ Succès</span>
+                        <span class="message">12 nouvelles annonces trouvées</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function saveScheduler() {
+    const config = {
+        interval: parseInt(document.getElementById('interval').value),
+        reportTime: document.getElementById('reportTime').value,
+        notifications: document.getElementById('enableNotifications').checked
+    };
+    
+    localStorage.setItem('schedulerConfig', JSON.stringify(config));
+    alert('Configuration enregistrée');
+}
+
+function startScheduler() {
+    fetch('/api/scheduler/start', {method: 'POST'})
+    .then(r => r.json())
+    .then(data => {
+        alert(data.message);
+        updateSchedulerStatus();
+    })
+    .catch(e => alert('Erreur: ' + e));
+}
+
+function stopScheduler() {
+    if (confirm('Êtes-vous sûr?')) {
+        fetch('/api/scheduler/stop', {method: 'POST'})
+        .then(r => r.json())
+        .then(data => {
+            alert(data.message);
+            updateSchedulerStatus();
+        })
+        .catch(e => alert('Erreur: ' + e));
+    }
+}
+
+function runNow() {
+    fetch('/api/scrape', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({source: 'all'})
+    })
+    .then(r => r.json())
+    .then(data => alert(data.message))
+    .catch(e => alert('Erreur: ' + e));
+}
+
+function updateSchedulerStatus() {
+    fetch('/api/scheduler/status')
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('runningStatus').textContent = 
+            data.running ? 'En cours d\'exécution' : 'Arrêté';
+        document.getElementById('lastRun').textContent = data.last_run;
+        document.getElementById('nextRun').textContent = data.next_run;
+    });
+}
+
+// Mise à jour au chargement
+updateSchedulerStatus();
+setInterval(updateSchedulerStatus, 30000); // Toutes les 30s
+</script>
+{% endblock %}

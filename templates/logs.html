@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>Logs Système</h1>
+
+        <div class="logs-container">
+            <div class="logs-controls">
+                <button class="btn btn-sm btn-primary" onclick="clearLogs()">
+                    <i class="fas fa-trash"></i> Effacer
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="downloadLogs()">
+                    <i class="fas fa-download"></i> Télécharger
+                </button>
+                <label>
+                    <input type="checkbox" id="autoRefresh"> Actualisation auto
+                </label>
+            </div>
+
+            <div class="logs-viewer">
+                <pre id="logsContent">{% for log in logs %}{{ log }}{% endfor %}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.logs-viewer {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 15px;
+    border-radius: 5px;
+    max-height: 600px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+.logs-viewer pre {
+    margin: 0;
+}
+</style>
+
+<script>
+function clearLogs() {
+    if (confirm('Êtes-vous sûr?')) {
+        alert('Fonction de suppression non disponible');
+    }
+}
+
+function downloadLogs() {
+    const logs = document.getElementById('logsContent').textContent;
+    const blob = new Blob([logs], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'immobilier-scraper.log';
+    a.click();
+}
+
+document.getElementById('autoRefresh').addEventListener('change', function() {
+    if (this.checked) {
+        setInterval(() => location.reload(), 5000);
+    }
+});
+</script>
+{% endblock %}

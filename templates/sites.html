@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>Gestion des Sites</h1>
+
+        <button class="btn btn-primary" onclick="showAddSiteForm()">
+            <i class="fas fa-plus"></i> Ajouter un Site
+        </button>
+
+        <div id="addSiteForm" class="form-modal" style="display:none;">
+            <div class="form-content">
+                <h2>Ajouter un nouveau site</h2>
+                <div class="form-group">
+                    <label>Nom du site</label>
+                    <input type="text" id="siteName" placeholder="Ex: Bien Ici">
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="siteUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>ID du scraper</label>
+                    <input type="text" id="siteId" placeholder="bienIci">
+                </div>
+                <div class="form-group">
+                    <label>Timeout (secondes)</label>
+                    <input type="number" id="siteTimeout" value="30">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="siteEnabled" checked>
+                        Activé au démarrage
+                    </label>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="addSite()">Ajouter</button>
+                    <button class="btn btn-secondary" onclick="hideAddSiteForm()">Annuler</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sites-grid">
+            {% for scraper in scrapers %}
+            <div class="site-card">
+                <div class="site-header">
+                    <h3>{{ scraper.name }}</h3>
+                    <div class="site-toggle">
+                        <label class="switch">
+                            <input type="checkbox" 
+                                   {% if scraper.enabled %}checked{% endif %}
+                                   onchange="toggleSite('{{ scraper.id }}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="site-body">
+                    <p><strong>ID:</strong> {{ scraper.id }}</p>
+                    <p><strong>URL:</strong> <a href="{{ scraper.url }}" target="_blank">Visiter</a></p>
+                    <p><strong>Timeout:</strong> {{ scraper.timeout }}s</p>
+                    <p><strong>Status:</strong> 
+                        {% if scraper.enabled %}
+                        <span class="badge badge-success">Actif</span>
+                        {% else %}
+                        <span class="badge badge-danger">Inactif</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="site-footer">
+                    <button class="btn btn-sm btn-primary" onclick="testScraper('{{ scraper.id }}')">
+                        <i class="fas fa-flask"></i> Tester
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function showAddSiteForm() {
+    document.getElementById('addSiteForm').style.display = 'block';
+}
+
+function hideAddSiteForm() {
+    document.getElementById('addSiteForm').style.display = 'none';
+}
+
+function toggleSite(siteId, enabled) {
+    fetch(`/api/sites/${siteId}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({enabled: enabled})
+    })
+    .then(r => r.json())
+    .then(data => alert(data.message))
+    .catch(e => alert('Erreur: ' + e));
+}
+
+function addSite() {
+    const data = {
+        id: document.getElementById('siteId').value,
+        name: document.getElementById('siteName').value,
+        url: document.getElementById('siteUrl').value,
+        timeout: parseInt(document.getElementById('siteTimeout').value),
+        enabled: document.getElementById('siteEnabled').checked
+    };
+
+    fetch('/api/sites/new', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(data => {
+        alert(data.message);
+        location.reload();
+    })
+    .catch(e => alert('Erreur: ' + e));
+}
+
+function testScraper(siteId) {
+    fetch('/api/scrape', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({source: siteId})
+    })
+    .then(r => r.json())
+    .then(data => alert(`${data.total} annonces trouvées, ${data.new} nouvelles`))
+    .catch(e => alert('Erreur: ' + e));
+}
+</script>
+{% endblock %}
