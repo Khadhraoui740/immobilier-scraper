@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: immobilier-scraper
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./logs:/app/logs
+      - ./database:/app/database
+      - ./data:/app/data
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - immobilier-network
+
+networks:
+  immobilier-network:
+    driver: bridge
