@@ -3,6 +3,7 @@ Gestion de la base de données SQLite pour les annonces immobilières
 """
 import sqlite3
 import logging
+import json
 from datetime import datetime
 from pathlib import Path
 from config import DATABASE_CONFIG, DPE_MAPPING, PROPERTY_STATUS
@@ -134,6 +135,11 @@ class Database:
         cursor = conn.cursor()
         
         try:
+            # Convertir les listes/dicts en JSON
+            images = property_data.get('images', [])
+            if isinstance(images, list):
+                images = json.dumps(images)
+            
             cursor.execute('''
                 INSERT OR REPLACE INTO properties 
                 (id, source, url, title, location, price, price_per_sqm, surface,
@@ -162,7 +168,7 @@ class Database:
                 DPE_MAPPING.get(property_data.get('dpe'), 6),
                 property_data.get('ges'),
                 property_data.get('ges_value'),
-                property_data.get('images'),
+                images,
                 property_data.get('contact_name'),
                 property_data.get('contact_phone'),
                 property_data.get('contact_email'),
