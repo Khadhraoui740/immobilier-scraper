@@ -82,3 +82,21 @@ class BaseScraper(ABC):
         """Générer un ID unique pour une propriété"""
         import hashlib
         return hashlib.md5(f"{self.name}-{url}".encode()).hexdigest()
+    
+    def _is_valid_property(self, property_data, dpe_max=None):
+        """Valider qu'une propriété respecte les critères"""
+        # Vérifier prix présent
+        if not property_data.get('price'):
+            return False
+        
+        # Vérifier surface présente
+        if not property_data.get('surface'):
+            return False
+        
+        # Vérifier DPE si requis
+        if dpe_max:
+            dpe = property_data.get('dpe', 'N/A')
+            if dpe != 'N/A' and dpe > dpe_max:
+                return False
+        
+        return True

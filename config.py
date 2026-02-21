@@ -38,6 +38,16 @@ DATABASE_CONFIG = {
 
 # Configuration des scrapers
 SCRAPERS_CONFIG = {
+    'dvf': {
+        'name': 'DVF',
+        'enabled': True,
+        'timeout': 30,
+        'delay_between_requests': 1,
+        'headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json',
+        }
+    },
     'seloger': {
         'name': 'SeLoger',
         'url': 'https://www.seloger.com/list.htm',

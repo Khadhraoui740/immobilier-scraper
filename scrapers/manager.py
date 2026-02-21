@@ -8,6 +8,7 @@ from .seloger_scraper import SeLogerScraper
 from .pap_scraper import PAPScraper
 from .leboncoin_scraper import LeBonCoinScraper
 from .bienici_scraper import BienIciScraper
+from .dvf_scraper import DVFScraper
 from .test_scraper import TestScraper
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,10 @@ class ScraperManager:
     
     def _init_scrapers(self):
         """Initialiser les scrapers"""
+        # DVF - Données publiques officielles (toujours actif)
+        if SCRAPERS_CONFIG.get('dvf', {}).get('enabled', True):
+            self.scrapers['dvf'] = DVFScraper(SCRAPERS_CONFIG.get('dvf', {'name': 'DVF', 'timeout': 30}))
+        
         if SCRAPERS_CONFIG['seloger']['enabled']:
             self.scrapers['seloger'] = SeLogerScraper(SCRAPERS_CONFIG['seloger'])
         
