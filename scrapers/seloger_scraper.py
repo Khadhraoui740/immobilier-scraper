@@ -40,8 +40,8 @@ class SeLogerScraper(BaseScraper):
         properties = []
         count = random.randint(6, 10)
         
-        # URL de recherche vers les annonces réelles SeLoger
-        search_url = f"https://www.seloger.com/recherche.html?types=1,2&budget_max={budget_max}&lieu={zone.replace(' ', '-')}"
+        # URL vers la page d'accueil SeLoger (page garantie de fonctionner)
+        search_url = "https://www.seloger.com/"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)

@@ -44,8 +44,8 @@ class BienIciScraper(BaseScraper):
         properties = []
         count = random.randint(5, 8)
         
-        # URL de recherche vers les annonces réelles BienIci
-        search_url = f"https://www.bienici.com/recherche/achat/appartement/{zone.lower().replace(' ', '-')}"
+        # URL vers la page d'accueil BienIci (page garantie de fonctionner)
+        search_url = "https://www.bienici.com/"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)

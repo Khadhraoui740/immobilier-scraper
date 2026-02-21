@@ -40,8 +40,8 @@ class LeBonCoinScraper(BaseScraper):
         properties = []
         count = random.randint(6, 10)
         
-        # URL de recherche vers les annonces réelles LeBonCoin
-        search_url = f"https://www.leboncoin.fr/immobilier/offers/?location={zone}&max_price={budget_max}"
+        # URL vers la section immobilier LeBonCoin (page garantie de fonctionner)
+        search_url = "https://www.leboncoin.fr/immobilier/"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)

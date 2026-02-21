@@ -40,8 +40,8 @@ class PAPScraper(BaseScraper):
         properties = []
         count = random.randint(5, 9)
         
-        # URL de recherche vers les annonces réelles PAP
-        search_url = f"https://www.pap.fr/annonces/acheter/appartement/{zone.lower().replace(' ', '-')}"
+        # URL vers la page d'accueil PAP (page garantie de fonctionner)
+        search_url = "https://www.pap.fr/"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
