@@ -52,8 +52,8 @@ class ScraperManager:
             except Exception as e:
                 logger.warning(f"Impossible d'initialiser BienIci: {e}")
         
-        # Ajouter le scraper de test pour la démo
-        self.scrapers['test'] = TestScraper({'name': 'Test', 'timeout': 5})
+        # Ajouter le scraper de test pour la démo (DISABLED - causes 404 errors)
+        # self.scrapers['test'] = TestScraper({'name': 'Test', 'timeout': 5})
 
     def reload(self):
         """Recharger les scrapers depuis la configuration (après modification)"""

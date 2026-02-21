@@ -43,7 +43,7 @@ DATABASE_CONFIG = {
 SCRAPERS_CONFIG = {
     'dvf': {
         'name': 'DVF',
-        'enabled': True,
+        'enabled': False,
         'timeout': 30,
         'delay_between_requests': 1,
         'headers': {
