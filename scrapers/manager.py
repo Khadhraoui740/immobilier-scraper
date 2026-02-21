@@ -3,7 +3,7 @@ Gestionnaire de scrapers
 """
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from config import SCRAPERS_CONFIG, SEARCH_CONFIG
+from config import SCRAPERS_CONFIG, SEARCH_CONFIG, ALWAYS_ALLOW_SCRAPERS
 from .seloger_scraper import SeLogerScraper
 from .pap_scraper import PAPScraper
 from .leboncoin_scraper import LeBonCoinScraper
@@ -27,20 +27,38 @@ class ScraperManager:
         if SCRAPERS_CONFIG.get('dvf', {}).get('enabled', True):
             self.scrapers['dvf'] = DVFScraper(SCRAPERS_CONFIG.get('dvf', {'name': 'DVF', 'timeout': 30}))
         
-        if SCRAPERS_CONFIG['seloger']['enabled']:
-            self.scrapers['seloger'] = SeLogerScraper(SCRAPERS_CONFIG['seloger'])
-        
-        if SCRAPERS_CONFIG['pap']['enabled']:
-            self.scrapers['pap'] = PAPScraper(SCRAPERS_CONFIG['pap'])
-        
-        if SCRAPERS_CONFIG['leboncoin']['enabled']:
-            self.scrapers['leboncoin'] = LeBonCoinScraper(SCRAPERS_CONFIG['leboncoin'])
-        
-        if SCRAPERS_CONFIG.get('bienici', {}).get('enabled', False):
-            self.scrapers['bienici'] = BienIciScraper(SCRAPERS_CONFIG['bienici'])
+        # Respecter le flag individuel ou activer si ALWAYS_ALLOW_SCRAPERS
+        if ALWAYS_ALLOW_SCRAPERS or SCRAPERS_CONFIG.get('seloger', {}).get('enabled', False):
+            try:
+                self.scrapers['seloger'] = SeLogerScraper(SCRAPERS_CONFIG.get('seloger', {}))
+            except Exception as e:
+                logger.warning(f"Impossible d'initialiser SeLoger: {e}")
+
+        if ALWAYS_ALLOW_SCRAPERS or SCRAPERS_CONFIG.get('pap', {}).get('enabled', False):
+            try:
+                self.scrapers['pap'] = PAPScraper(SCRAPERS_CONFIG.get('pap', {}))
+            except Exception as e:
+                logger.warning(f"Impossible d'initialiser PAP: {e}")
+
+        if ALWAYS_ALLOW_SCRAPERS or SCRAPERS_CONFIG.get('leboncoin', {}).get('enabled', False):
+            try:
+                self.scrapers['leboncoin'] = LeBonCoinScraper(SCRAPERS_CONFIG.get('leboncoin', {}))
+            except Exception as e:
+                logger.warning(f"Impossible d'initialiser LeBonCoin: {e}")
+
+        if ALWAYS_ALLOW_SCRAPERS or SCRAPERS_CONFIG.get('bienici', {}).get('enabled', False):
+            try:
+                self.scrapers['bienici'] = BienIciScraper(SCRAPERS_CONFIG.get('bienici', {}))
+            except Exception as e:
+                logger.warning(f"Impossible d'initialiser BienIci: {e}")
         
         # Ajouter le scraper de test pour la démo
         self.scrapers['test'] = TestScraper({'name': 'Test', 'timeout': 5})
+
+    def reload(self):
+        """Recharger les scrapers depuis la configuration (après modification)"""
+        self.scrapers = {}
+        self._init_scrapers()
     
     def scrape_all(self, budget_min=None, budget_max=None, dpe_max=None, zones=None):
         """Scraper toutes les plateformes en parallèle"""

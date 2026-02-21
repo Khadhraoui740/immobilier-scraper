@@ -20,19 +20,19 @@
             {% for prop in properties %}
             <div class="property-card">
                 <div class="property-header">
-                    <h3>{{ prop.title }}</h3>
-                    <span class="badge badge-{{ prop.source|lower }}">{{ prop.source }}</span>
+                    <h3>{{ prop.title or 'Sans titre' }}</h3>
+                    <span class="badge badge-{{ (prop.source or 'unknown')|lower }}">{{ prop.source or 'Inconnu' }}</span>
                 </div>
                 
                 <div class="property-body">
-                    <p><strong>Prix:</strong> {{ prop.price }}</p>
-                    <p><strong>Localisation:</strong> {{ prop.location }}</p>
-                    <p><strong>Statut:</strong> {{ prop.status }}</p>
-                    <p><strong>DPE:</strong> <span class="dpe dpe-{{ prop.dpe|lower }}">{{ prop.dpe }}</span></p>
+                    <p><strong>Prix:</strong> {{ prop.price or 'N/A' }}</p>
+                    <p><strong>Localisation:</strong> {{ prop.location or 'N/A' }}</p>
+                    <p><strong>Statut:</strong> {{ prop.status or 'N/A' }}</p>
+                    <p><strong>DPE:</strong> <span class="dpe dpe-{{ (prop.dpe or 'N/A')|lower }}">{{ prop.dpe or 'N/A' }}</span></p>
                 </div>
 
                 <div class="property-footer">
-                    <a href="{{ prop.url }}" target="_blank" class="btn btn-sm btn-primary">
+                    <a href="{{ prop.url or '#' }}" target="_blank" class="btn btn-sm btn-primary">
                         <i class="fas fa-external-link-alt"></i> Voir
                     </a>
                     <button class="btn btn-sm btn-secondary" onclick="editProperty('{{ prop.id }}')">

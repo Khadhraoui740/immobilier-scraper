@@ -20,6 +20,9 @@ SEARCH_CONFIG = {
     }
 }
 
+# Mode de développement: toujours activer les scrapers indépendamment des flags individuels
+ALWAYS_ALLOW_SCRAPERS = True
+
 # Configuration Email
 EMAIL_CONFIG = {
     'email': 'khadhraoui.jalel@gmail.com',

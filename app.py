@@ -15,6 +15,8 @@ from database import Database
 from scrapers.manager import ScraperManager
 from analyzer import PropertyAnalyzer
 from config import SEARCH_CONFIG, SCRAPERS_CONFIG
+from utils import PropertyUtils
+from validators import validate_property
 from datetime import datetime
 import json
 
@@ -92,6 +94,24 @@ def properties():
                          page=page,
                          total=total,
                          pages=(total + limit - 1) // limit)
+
+
+@app.route('/dashboard')
+def dashboard_redirect():
+    """Compatibilité: rediriger /dashboard vers la page principale"""
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/api/properties', methods=['GET'])
+def api_properties():
+    """Retourner les propriétés en JSON (compatibilité API)"""
+    try:
+        props = db.get_properties()
+        props_list = [dict(p) for p in props]
+        return jsonify({'success': True, 'properties': props_list, 'count': len(props_list)})
+    except Exception as e:
+        logger.error(f"Erreur api_properties: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @app.route('/search')
@@ -190,11 +210,18 @@ def api_scrape():
                 zones=zones
             )
         
-        # Ajouter à la base
+        # Normaliser, valider et ajouter à la base
         new_count = 0
         for prop in properties:
-            if not db.property_exists(prop.get('url')):
-                db.add_property(prop)
+            normalized = PropertyUtils.normalize_property(prop)
+            try:
+                validated = validate_property(normalized)
+            except Exception as e:
+                logger.warning(f"Propriété ignorée (validation): {e}")
+                continue
+
+            if not db.property_exists(validated.get('url')):
+                db.add_property(validated)
                 new_count += 1
         
         return jsonify({
@@ -313,7 +340,13 @@ def api_update_site(site_id):
             
             # Sauvegarder la config
             # Note: Dans une vraie app, on sauvegarderait dans la BD
-            
+            # Recharger les scrapers en mémoire pour prendre en compte le changement
+            try:
+                scraper_manager.reload()
+            except Exception:
+                # Pas bloquant, on continue
+                logger.warning('Impossible de recharger le gestionnaire de scrapers')
+
             return jsonify({
                 'success': True,
                 'message': f'{SCRAPERS_CONFIG[site_id].get("name")} '

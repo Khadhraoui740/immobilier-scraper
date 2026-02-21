@@ -34,6 +34,66 @@ class PropertyUtils:
         if not surface:
             return "N/A"
         return f"{surface:.0f} m²"
+
+    @staticmethod
+    def normalize_property(prop: dict) -> dict:
+        """Normaliser une propriété pour insertion / API.
+
+        Garantit la présence et le type des champs clés utilisés par l'app.
+        """
+        if not isinstance(prop, dict):
+            return {}
+
+        p = dict(prop)  # copie
+
+        # Identifiants et source
+        p['source'] = p.get('source') or p.get('site') or 'unknown'
+        p['url'] = p.get('url') or ''
+        p['id'] = p.get('id') or HashUtils.hash_property(p) or ''
+
+        # Texte
+        p['title'] = (p.get('title') or 'Sans titre').strip()
+        p['location'] = (p.get('location') or 'N/A').strip()
+
+        # Numériques
+        try:
+            p['price'] = float(p['price']) if p.get('price') not in (None, '', 'N/A') else None
+        except Exception:
+            p['price'] = None
+
+        try:
+            p['surface'] = float(p['surface']) if p.get('surface') not in (None, '', 'N/A') else None
+        except Exception:
+            p['surface'] = None
+
+        # Calculs auxiliaires
+        p['price_per_sqm'] = PropertyUtils.calculate_price_per_sqm(p.get('price'), p.get('surface'))
+
+        # DPE / GES
+        p['dpe'] = p.get('dpe') or 'N/A'
+        p['dpe_value'] = None
+        p['ges'] = p.get('ges') or 'N/A'
+        p['ges_value'] = p.get('ges_value') or None
+
+        # Images
+        images = p.get('images') or []
+        if isinstance(images, str):
+            try:
+                import json as _json
+                images = _json.loads(images)
+            except Exception:
+                images = [images]
+        p['images'] = images if isinstance(images, list) else [images]
+
+        # Contacts
+        p['contact_name'] = p.get('contact_name') or ''
+        p['contact_phone'] = p.get('contact_phone') or ''
+        p['contact_email'] = p.get('contact_email') or ''
+
+        # Dates
+        p['posted_date'] = p.get('posted_date') or DateUtils.get_timestamp()
+
+        return p
     
     @staticmethod
     def calculate_dpe_rating(price_per_sqm: float) -> str:

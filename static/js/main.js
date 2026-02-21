@@ -133,17 +133,23 @@ async function doSearch() {
     
     const resultsDiv = document.getElementById('results');
     if (result && result.success) {
-        if (result.properties.length > 0) {
+        if (result.properties && result.properties.length > 0) {
             let html = `<h3>${result.count} résultats trouvés</h3>`;
             html += '<div class="results-list">';
             result.properties.forEach(p => {
+                const priceHtml = (p.price || p.price === 0) ? formatPrice(p.price) : 'N/A';
+                const surfaceHtml = p.surface ? `${p.surface}m²` : 'N/A';
+                const dpe = p.dpe || 'N/A';
+                const dpeClass = dpe && typeof dpe === 'string' ? ('dpe-' + dpe.toLowerCase()) : 'dpe-na';
+                const sourceBadge = (p.source || 'Unknown').toString().toLowerCase().replace(/\s+/g, '-');
+
                 html += `
                     <div class="result-item card">
-                        <strong>${p.title}</strong><br>
-                        Prix: ${formatPrice(p.price)} | 
-                        Surface: ${p.surface}m² | 
-                        DPE: <span class="dpe dpe-${p.dpe.toLowerCase()}">${p.dpe}</span><br>
-                        Source: <span class="badge badge-${p.source.toLowerCase()}">${p.source}</span>
+                        <strong>${p.title || 'Sans titre'}</strong><br>
+                        Prix: ${priceHtml} | 
+                        Surface: ${surfaceHtml} | 
+                        DPE: <span class="dpe ${dpeClass}">${dpe}</span><br>
+                        Source: <span class="badge badge-${sourceBadge}">${p.source || 'Inconnu'}</span>
                     </div>
                 `;
             });

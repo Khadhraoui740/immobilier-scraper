@@ -7,19 +7,19 @@
         
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value">{{ total_properties }}</div>
+                <div class="stat-value" id="total-properties">{{ total_properties or 0 }}</div>
                 <div class="stat-label">Total Propriétés</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">{{ new_24h }}</div>
+                <div class="stat-value">{{ new_24h or 0 }}</div>
                 <div class="stat-label">Nouvelles (24h)</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">{{ avg_price }}</div>
+                <div class="stat-value">{{ avg_price or 'N/A' }}</div>
                 <div class="stat-label">Prix Moyen</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">{{ price_range }}</div>
+                <div class="stat-value">{{ price_range or 'N/A' }}</div>
                 <div class="stat-label">Plage de Prix</div>
             </div>
         </div>
