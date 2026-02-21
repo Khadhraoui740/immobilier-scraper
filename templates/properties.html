@@ -32,7 +32,11 @@
                 </div>
 
                 <div class="property-footer">
-                    <a href="{{ prop.url or '#' }}" target="_blank" class="btn btn-sm btn-primary">
+                    {% if prop.url %}
+                    <a href="{{ prop.url }}" target="_blank" class="btn btn-sm btn-primary">
+                    {% else %}
+                    <a href="/property/{{ prop.id }}" class="btn btn-sm btn-primary">
+                    {% endif %}
                         <i class="fas fa-external-link-alt"></i> Voir
                     </a>
                     <button class="btn btn-sm btn-secondary" onclick="editProperty('{{ prop.id }}')">

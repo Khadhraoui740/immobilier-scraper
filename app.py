@@ -36,6 +36,13 @@ analyzer = PropertyAnalyzer()
 # ROUTES - PAGES PRINCIPALES
 # ============================================================================
 
+@app.route('/health')
+def health():
+    """Health check endpoint for monitoring and CI/CD"""
+    from health import check_health
+    status = check_health(db, scraper_manager)
+    return jsonify(status), (200 if status['status'] == 'healthy' else 503)
+
 @app.route('/')
 def dashboard():
     """Page d'accueil - Dashboard"""
@@ -158,6 +165,12 @@ def statistics():
 def config_page():
     """Page de configuration"""
     return render_template('config.html')
+
+
+@app.route('/smtp_config')
+def smtp_config_page():
+    """Page de configuration SMTP"""
+    return render_template('smtp_config.html')
 
 
 @app.route('/logs')
@@ -308,6 +321,25 @@ def api_property(property_id):
     except Exception as e:
         logger.error(f"Erreur propriété: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/property/<property_id>')
+def property_page(property_id):
+    """Page HTML pour une propriété"""
+    try:
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM properties WHERE id = ?', (property_id,))
+        prop = cursor.fetchone()
+        conn.close()
+
+        if not prop:
+            return render_template('404.html'), 404
+
+        return render_template('property.html', prop=dict(prop))
+    except Exception as e:
+        logger.error(f"Erreur property_page: {e}")
+        return render_template('500.html'), 500
 
 
 # ============================================================================
@@ -558,6 +590,80 @@ def api_save_config():
     except Exception as e:
         logger.error(f"Erreur save config: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/config/smtp', methods=['POST'])
+def api_config_smtp():
+    """Sauvegarder la configuration SMTP"""
+    try:
+        data = request.json
+        
+        # Store in environment-like config (in memory for now)
+        import os
+        os.environ['SMTP_SERVER'] = data.get('smtp_server', '')
+        os.environ['SMTP_PORT'] = str(data.get('smtp_port', 587))
+        os.environ['SMTP_FROM'] = data.get('from_email', '')
+        os.environ['SMTP_PASSWORD'] = data.get('password', '')
+        os.environ['SMTP_RECIPIENT'] = data.get('email', '')
+        
+        return jsonify({
+            'success': True,
+            'message': 'Configuration SMTP sauvegardée (mémoire)',
+            'config': {
+                'smtp_server': data.get('smtp_server'),
+                'smtp_port': data.get('smtp_port'),
+                'from_email': data.get('from_email'),
+                'email': data.get('email')
+            }
+        })
+    except Exception as e:
+        logger.error(f"Erreur config SMTP: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/config/smtp/test', methods=['POST'])
+def api_config_smtp_test():
+    """Tester la connexion SMTP"""
+    try:
+        import smtplib
+        import os
+        
+        smtp_server = os.getenv('SMTP_SERVER') or SEARCH_CONFIG.get('smtp_server')
+        smtp_port = int(os.getenv('SMTP_PORT') or 587)
+        from_email = os.getenv('SMTP_FROM') or SEARCH_CONFIG.get('from_email')
+        password = os.getenv('SMTP_PASSWORD')
+        
+        if not all([smtp_server, from_email, password]):
+            return jsonify({
+                'success': False,
+                'error': 'Configuration SMTP incomplète'
+            }), 400
+        
+        # Test connexion
+        with smtplib.SMTP(smtp_server, smtp_port, timeout=5) as server:
+            server.starttls()
+            server.login(from_email, password)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Connexion SMTP réussie'
+        })
+    except smtplib.SMTPAuthenticationError:
+        return jsonify({
+            'success': False,
+            'error': 'Authentification échouée - vérifiez email et mot de passe'
+        })
+    except smtplib.SMTPException as e:
+        return jsonify({
+            'success': False,
+            'error': f'Erreur SMTP: {str(e)}'
+        })
+    except Exception as e:
+        logger.error(f"Erreur test SMTP: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 
 @app.route('/api/db/optimize', methods=['POST'])

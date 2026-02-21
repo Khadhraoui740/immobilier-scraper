@@ -1,12 +1,12 @@
 {
-  "budget_min": 10000,
-  "budget_max": 130000,
-  "dpe_max": "D",
-  "surface_min": 30,
+  "budget_min": 150000,
+  "budget_max": 350000,
+  "dpe_max": "C",
+  "surface_min": null,
   "zones": [
-    "77"
+    "Paris"
   ],
-  "email": "khadhraoui.jalel@gmail.com",
-  "report_time": "09:00",
-  "email_notifications": true
+  "email": null,
+  "report_time": null,
+  "email_notifications": null
 }

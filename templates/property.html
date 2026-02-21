@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page">
+        <h1>{{ prop.title or 'Sans titre' }}</h1>
+
+        <div class="property-detail">
+            <p><strong>Prix:</strong> {{ prop.price or 'N/A' }}</p>
+            <p><strong>Localisation:</strong> {{ prop.location or 'N/A' }}</p>
+            <p><strong>Surface:</strong> {{ prop.surface or 'N/A' }} m²</p>
+            <p><strong>DPE:</strong> {{ prop.dpe or 'N/A' }}</p>
+            <p><strong>Description:</strong><br>{{ prop.description or '' }}</p>
+
+            <div class="actions">
+                {% if prop.url %}
+                <a href="{{ prop.url }}" target="_blank" class="btn btn-primary">Ouvrir l'annonce originale</a>
+                {% endif %}
+                <a href="/properties" class="btn">Retour</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

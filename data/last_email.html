@@ -1,0 +1,196 @@
+
+        <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+                    .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; }
+                    .header { background-color: #2c3e50; color: white; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+                    .property { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+                    .property-title { font-size: 18px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
+                    .property-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+                    .detail-item { padding: 5px; background-color: #f9f9f9; border-left: 3px solid #3498db; padding-left: 10px; }
+                    .price { font-size: 20px; font-weight: bold; color: #27ae60; }
+                    .location { color: #7f8c8d; }
+                    .dpe { display: inline-block; padding: 5px 10px; border-radius: 3px; font-weight: bold; }
+                    .dpe-a { background-color: #27ae60; color: white; }
+                    .dpe-b { background-color: #52be80; color: white; }
+                    .dpe-c { background-color: #f39c12; color: white; }
+                    .dpe-d { background-color: #e74c3c; color: white; }
+                    .dpe-e { background-color: #c0392b; color: white; }
+                    .button { display: inline-block; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 3px; margin-top: 10px; }
+                    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #7f8c8d; font-size: 12px; }
+                    .criteria { background-color: #ecf0f1; padding: 10px; border-radius: 3px; margin-bottom: 20px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🏠 Alerte Propriétés Immobilières</h1>
+                        <p>5 nouvelle(s) propriété(s) trouvée(s)</p>
+                    </div>
+                    
+                    <div class="criteria">
+                        <strong>Critères de recherche:</strong><br>
+                        Budget: 100,000 € - 600,000 €<br>
+                        Zones: Paris, Lyon<br>
+                        DPE maximum: E
+                    </div>
+        
+                    <div class="property">
+                        <div class="property-title">Appartement 3P - Gentilly</div>
+                        <div class="location">Val-de-Marne</div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <strong>Prix:</strong><br>
+                                <span class="price">320,000.0 €</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Surface:</strong><br>
+                                63.0 m²
+                            </div>
+                            <div class="detail-item">
+                                <strong>Pièces:</strong><br>
+                                None
+                            </div>
+                            <div class="detail-item">
+                                <strong>DPE:</strong><br>
+                                <span class="dpe dpe-b">B</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <strong>Source:</strong> DVF
+                        </div>
+                        
+                        <a href="https://dvf.gouv.fr/property/Val-de-Marne_11_320000" class="button">Voir l'annonce →</a>
+                    </div>
+            
+                    <div class="property">
+                        <div class="property-title">Appartement 3P - Fontenay</div>
+                        <div class="location">Val-de-Marne</div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <strong>Prix:</strong><br>
+                                <span class="price">280,000.0 €</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Surface:</strong><br>
+                                78.0 m²
+                            </div>
+                            <div class="detail-item">
+                                <strong>Pièces:</strong><br>
+                                None
+                            </div>
+                            <div class="detail-item">
+                                <strong>DPE:</strong><br>
+                                <span class="dpe dpe-b">B</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <strong>Source:</strong> DVF
+                        </div>
+                        
+                        <a href="https://dvf.gouv.fr/property/Val-de-Marne_7_280000" class="button">Voir l'annonce →</a>
+                    </div>
+            
+                    <div class="property">
+                        <div class="property-title">Appartement 2P - Saint-Mandé</div>
+                        <div class="location">Val-de-Marne</div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <strong>Prix:</strong><br>
+                                <span class="price">320,000.0 €</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Surface:</strong><br>
+                                40.0 m²
+                            </div>
+                            <div class="detail-item">
+                                <strong>Pièces:</strong><br>
+                                None
+                            </div>
+                            <div class="detail-item">
+                                <strong>DPE:</strong><br>
+                                <span class="dpe dpe-c">C</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <strong>Source:</strong> DVF
+                        </div>
+                        
+                        <a href="https://dvf.gouv.fr/property/Val-de-Marne_2_320000" class="button">Voir l'annonce →</a>
+                    </div>
+            
+                    <div class="property">
+                        <div class="property-title">Appartement 1P - Gentilly</div>
+                        <div class="location">Val-de-Marne</div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <strong>Prix:</strong><br>
+                                <span class="price">280,000.0 €</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Surface:</strong><br>
+                                42.0 m²
+                            </div>
+                            <div class="detail-item">
+                                <strong>Pièces:</strong><br>
+                                None
+                            </div>
+                            <div class="detail-item">
+                                <strong>DPE:</strong><br>
+                                <span class="dpe dpe-d">D</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <strong>Source:</strong> DVF
+                        </div>
+                        
+                        <a href="https://dvf.gouv.fr/property/Val-de-Marne_0_280000" class="button">Voir l'annonce →</a>
+                    </div>
+            
+                    <div class="property">
+                        <div class="property-title">Appartement 1P - Courbevoie</div>
+                        <div class="location">Hauts-de-Seine</div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <strong>Prix:</strong><br>
+                                <span class="price">350,000.0 €</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Surface:</strong><br>
+                                45.0 m²
+                            </div>
+                            <div class="detail-item">
+                                <strong>Pièces:</strong><br>
+                                None
+                            </div>
+                            <div class="detail-item">
+                                <strong>DPE:</strong><br>
+                                <span class="dpe dpe-a">A</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <strong>Source:</strong> DVF
+                        </div>
+                        
+                        <a href="https://dvf.gouv.fr/property/Hauts-de-Seine_8_350000" class="button">Voir l'annonce →</a>
+                    </div>
+            
+                    <div class="footer">
+                        <p>Email généré automatiquement le 21/02/2026 à 11:52</p>
+                        <p>Vous recevez cet email car vous êtes inscrit au système d'alertes immobilières.</p>
+                    </div>
+                </div>
+            </body>
+        </html>
+        

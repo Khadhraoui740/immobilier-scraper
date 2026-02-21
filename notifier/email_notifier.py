@@ -5,6 +5,7 @@ import os
 import logging
 import smtplib
 from datetime import datetime
+from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
@@ -24,8 +25,14 @@ class EmailNotifier:
         self.recipient_email = EMAIL_CONFIG['email']
         self.password = os.getenv('EMAIL_PASSWORD')
         
+        # Si aucun mot de passe fourni, activer le mode debug: écrire l'email
+        # dans un fichier local pour tests et développement.
+        self.debug_mode = False
         if not self.password:
-            logger.warning("EMAIL_PASSWORD non configuré dans .env")
+            logger.warning("EMAIL_PASSWORD non configuré dans .env — fallback debug activé")
+            self.debug_mode = True
+            self.debug_path = Path(__file__).parent.parent / 'data' / 'last_email.html'
+            self.debug_path.parent.mkdir(parents=True, exist_ok=True)
     
     def send_alert(self, properties, search_name="Propriétés correspondant à votre recherche"):
         """Envoyer une alerte avec les propriétés trouvées"""
@@ -33,7 +40,7 @@ class EmailNotifier:
             logger.info("Aucune propriété à notifier")
             return False
         
-        if not self.password:
+        if not self.password and not self.debug_mode:
             logger.error("Mot de passe email non configuré")
             return False
         
@@ -50,7 +57,18 @@ class EmailNotifier:
             # Envoyer en HTML
             message.attach(MIMEText(html_content, 'html'))
             
-            # Connexion et envoi
+            # Mode debug: écrire le HTML dans un fichier local
+            if self.debug_mode:
+                try:
+                    with open(self.debug_path, 'w', encoding='utf-8') as f:
+                        f.write(html_content)
+                    logger.info(f"Email debug écrit dans {self.debug_path}")
+                    return True
+                except Exception as e:
+                    logger.error(f"Impossible d'écrire l'email debug: {e}")
+                    return False
+
+            # Connexion et envoi réel
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
                 server.login(self.from_email, self.password)
