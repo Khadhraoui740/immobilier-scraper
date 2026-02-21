@@ -36,24 +36,24 @@ class PAPScraper(BaseScraper):
         return results
     
     def _generate_pap_properties(self, zone, budget_min, budget_max):
-        """Générer propriétés PAP avec URLs réalistes"""
+        """Générer propriétés PAP avec URLs de recherche fonctionnelles"""
         properties = []
         count = random.randint(5, 9)
+        
+        # URL de recherche vers les annonces réelles PAP
+        search_url = f"https://www.pap.fr/annonces/acheter/appartement/{zone.lower().replace(' ', '-')}"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
             surface = random.randint(35, 110)
             rooms = max(1, int(surface / 25))
             
-            # PAP URLs utilisent des IDs numériques
-            pap_id = random.randint(1000000, 9999999)
-            
             property_data = {
                 'platform': 'PAP',
                 'source': 'PAP',
                 'id': f"pap_{zone}_{i}",
                 'title': f"Appart. {rooms}p - {zone}",
-                'url': f"https://www.pap.fr/annonce/vente-appartement-{zone.lower().replace(' ', '-')}-{pap_id}",
+                'url': search_url,
                 'price': float(price),
                 'location': zone,
                 'rooms': rooms,

@@ -40,24 +40,24 @@ class BienIciScraper(BaseScraper):
         return results
     
     def _generate_bienici_properties(self, zone, budget_min, budget_max):
-        """Générer propriétés BienIci avec URLs réalistes"""
+        """Générer propriétés BienIci avec URLs de recherche fonctionnelles"""
         properties = []
         count = random.randint(5, 8)
+        
+        # URL de recherche vers les annonces réelles BienIci
+        search_url = f"https://www.bienici.com/recherche/achat/appartement/{zone.lower().replace(' ', '-')}"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
             surface = random.randint(35, 110)
             rooms = max(1, int(surface / 25))
             
-            # BienIci URLs utilisent des IDs numériques
-            bienici_id = random.randint(10000000, 99999999)
-            
             property_data = {
                 'platform': 'BienIci',
                 'source': 'BienIci',
                 'id': f"bienici_{zone}_{i}",
                 'title': f"Bien immobilier {rooms} pièces - {zone}",
-                'url': f"https://www.bienici.com/annonce-immobiliere/{bienici_id}",
+                'url': search_url,
                 'price': float(price),
                 'location': zone,
                 'rooms': rooms,

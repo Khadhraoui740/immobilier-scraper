@@ -36,41 +36,104 @@ class Database:
         cursor = conn.cursor()
         
         try:
-            # Table des annonces
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS properties (
-                    id TEXT PRIMARY KEY,
-                    source TEXT NOT NULL,
-                    url TEXT UNIQUE NOT NULL,
-                    title TEXT NOT NULL,
-                    location TEXT NOT NULL,
-                    price REAL NOT NULL,
-                    price_per_sqm REAL,
-                    surface REAL,
-                    rooms REAL,
-                    bedrooms REAL,
-                    bathrooms REAL,
-                    floor TEXT,
-                    building_year INTEGER,
-                    property_type TEXT,
-                    description TEXT,
-                    dpe TEXT,
-                    dpe_value INTEGER,
-                    ges TEXT,
-                    ges_value INTEGER,
-                    images TEXT,
-                    contact_name TEXT,
-                    contact_phone TEXT,
-                    contact_email TEXT,
-                    posted_date TIMESTAMP,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    status TEXT DEFAULT 'disponible',
-                    notes TEXT,
-                    is_favorite BOOLEAN DEFAULT 0,
-                    viewed BOOLEAN DEFAULT 0
-                )
-            ''')
+            # Vérifier si la table existe et a une contrainte UNIQUE sur url
+            cursor.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='properties'")
+            existing = cursor.fetchone()
+            
+            if existing and 'url TEXT UNIQUE' in existing[0]:
+                # Migrer vers une nouvelle table sans UNIQUE constraint
+                logger.info("Migrating properties table: removing UNIQUE constraint from url column")
+                cursor.execute("DROP TABLE IF EXISTS properties_old")
+                cursor.execute("ALTER TABLE properties RENAME TO properties_old")
+                
+                # Créer la nouvelle table
+                cursor.execute('''
+                    CREATE TABLE properties (
+                        id TEXT PRIMARY KEY,
+                        source TEXT NOT NULL,
+                        url TEXT NOT NULL,
+                        title TEXT NOT NULL,
+                        location TEXT NOT NULL,
+                        price REAL NOT NULL,
+                        price_per_sqm REAL,
+                        surface REAL,
+                        rooms REAL,
+                        bedrooms REAL,
+                        bathrooms REAL,
+                        floor TEXT,
+                        building_year INTEGER,
+                        property_type TEXT,
+                        description TEXT,
+                        dpe TEXT,
+                        dpe_value INTEGER,
+                        ges TEXT,
+                        ges_value INTEGER,
+                        images TEXT,
+                        contact_name TEXT,
+                        contact_phone TEXT,
+                        contact_email TEXT,
+                        posted_date TIMESTAMP,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        status TEXT DEFAULT 'disponible',
+                        notes TEXT,
+                        is_favorite BOOLEAN DEFAULT 0,
+                        viewed BOOLEAN DEFAULT 0
+                    )
+                ''')
+                
+                # Copier les données
+                cursor.execute('''
+                    INSERT INTO properties (id, source, url, title, location, price, price_per_sqm, surface,
+                        rooms, bedrooms, bathrooms, floor, building_year, property_type,
+                        description, dpe, dpe_value, ges, ges_value, images,
+                        contact_name, contact_phone, contact_email, posted_date, status)
+                    SELECT id, source, url, title, location, price, price_per_sqm, surface,
+                        rooms, bedrooms, bathrooms, floor, building_year, property_type,
+                        description, dpe, dpe_value, ges, ges_value, images,
+                        contact_name, contact_phone, contact_email, posted_date, status
+                    FROM properties_old
+                ''')
+                
+                cursor.execute("DROP TABLE properties_old")
+                logger.info("Migration complete")
+            
+            elif not existing:
+                # Créer la table si elle n'existe pas
+                cursor.execute('''
+                    CREATE TABLE properties (
+                        id TEXT PRIMARY KEY,
+                        source TEXT NOT NULL,
+                        url TEXT NOT NULL,
+                        title TEXT NOT NULL,
+                        location TEXT NOT NULL,
+                        price REAL NOT NULL,
+                        price_per_sqm REAL,
+                        surface REAL,
+                        rooms REAL,
+                        bedrooms REAL,
+                        bathrooms REAL,
+                        floor TEXT,
+                        building_year INTEGER,
+                        property_type TEXT,
+                        description TEXT,
+                        dpe TEXT,
+                        dpe_value INTEGER,
+                        ges TEXT,
+                        ges_value INTEGER,
+                        images TEXT,
+                        contact_name TEXT,
+                        contact_phone TEXT,
+                        contact_email TEXT,
+                        posted_date TIMESTAMP,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        status TEXT DEFAULT 'disponible',
+                        notes TEXT,
+                        is_favorite BOOLEAN DEFAULT 0,
+                        viewed BOOLEAN DEFAULT 0
+                    )
+                ''')
             
             # Table d'historique
             cursor.execute('''
@@ -141,7 +204,7 @@ class Database:
                 images = json.dumps(images)
             
             cursor.execute('''
-                INSERT OR REPLACE INTO properties 
+                INSERT INTO properties 
                 (id, source, url, title, location, price, price_per_sqm, surface,
                  rooms, bedrooms, bathrooms, floor, building_year, property_type,
                  description, dpe, dpe_value, ges, ges_value, images,

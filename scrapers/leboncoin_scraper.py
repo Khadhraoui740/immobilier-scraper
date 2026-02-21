@@ -36,24 +36,24 @@ class LeBonCoinScraper(BaseScraper):
         return results
     
     def _generate_leboncoin_properties(self, zone, budget_min, budget_max):
-        """Générer propriétés LeBonCoin avec URLs réalistes"""
+        """Générer propriétés LeBonCoin avec URLs de recherche fonctionnelles"""
         properties = []
         count = random.randint(6, 10)
+        
+        # URL de recherche vers les annonces réelles LeBonCoin
+        search_url = f"https://www.leboncoin.fr/immobilier/offers/?location={zone}&max_price={budget_max}"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
             surface = random.randint(35, 110)
             rooms = max(1, int(surface / 25))
             
-            # LeBonCoin URLs utilisent des IDs numériques
-            lbc_id = random.randint(1000000000, 9999999999)
-            
             property_data = {
                 'platform': 'LeBonCoin',
                 'source': 'LeBonCoin',
                 'id': f"lbc_{zone}_{i}",
                 'title': f"Appartement {rooms} pièces - {zone}",
-                'url': f"https://www.leboncoin.fr/immobilier/offers/{lbc_id}",
+                'url': search_url,
                 'price': float(price),
                 'location': zone,
                 'rooms': rooms,

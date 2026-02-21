@@ -36,26 +36,24 @@ class SeLogerScraper(BaseScraper):
         return results
     
     def _generate_seloger_properties(self, zone, budget_min, budget_max):
-        """Générer des propriétés avec URLs réalistes SeLoger"""
+        """Générer des propriétés avec URLs de recherche fonctionnelles SeLoger"""
         properties = []
         count = random.randint(6, 10)
         
-        zone_code = self._get_zone_code(zone)
+        # URL de recherche vers les annonces réelles SeLoger
+        search_url = f"https://www.seloger.com/recherche.html?types=1,2&budget_max={budget_max}&lieu={zone.replace(' ', '-')}"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
             surface = random.randint(30, 120)
             rooms = max(1, int(surface / 25) + random.randint(-1, 1))
             
-            # SeLoger property IDs sont des longs entiers
-            seloger_id = random.randint(100000000, 999999999)
-            
             property_data = {
                 'platform': 'SeLoger',
                 'source': 'SeLoger',
                 'id': f"seloger_{zone}_{i}",
                 'title': f"Appartement {rooms}P - {zone}",
-                'url': f"https://www.seloger.com/annonces/achat/appartement/{zone_code.lower()}/{seloger_id}.htm",
+                'url': search_url,
                 'price': float(price),
                 'location': zone,
                 'rooms': rooms,
