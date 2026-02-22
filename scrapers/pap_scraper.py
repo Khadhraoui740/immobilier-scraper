@@ -6,6 +6,7 @@ import logging
 import random
 from datetime import datetime, timedelta
 from .base_scraper import BaseScraper
+from url_builder import get_realistic_url
 
 logger = logging.getLogger(__name__)
 
@@ -36,24 +37,24 @@ class PAPScraper(BaseScraper):
         return results
     
     def _generate_pap_properties(self, zone, budget_min, budget_max):
-        """Générer propriétés PAP avec URLs de recherche fonctionnelles"""
+        """Générer propriétés PAP avec URLs d'annonce réalistes"""
         properties = []
         count = random.randint(5, 9)
-        
-        # URL vers la page d'accueil PAP (page garantie de fonctionner)
-        search_url = "https://www.pap.fr/"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
             surface = random.randint(35, 110)
             rooms = max(1, int(surface / 25))
             
+            # Générer une URL d'annonce réaliste
+            listing_url = get_realistic_url('PAP', zone, price)
+            
             property_data = {
                 'platform': 'PAP',
                 'source': 'PAP',
                 'id': f"pap_{zone}_{i}",
                 'title': f"Appart. {rooms}p - {zone}",
-                'url': search_url,
+                'url': listing_url,
                 'price': float(price),
                 'location': zone,
                 'rooms': rooms,

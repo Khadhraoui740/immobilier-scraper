@@ -31,6 +31,36 @@ db = Database()
 scraper_manager = ScraperManager()
 analyzer = PropertyAnalyzer()
 
+# ============================================================================
+# CHARGER LA CONFIG UTILISATEUR AU DÉMARRAGE
+# ============================================================================
+def load_user_config():
+    """Charger la configuration sauvegardée par l'utilisateur"""
+    config_file = Path(__file__).parent / 'data' / 'user_config.json'
+    if config_file.exists():
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                user_config = json.load(f)
+            
+            # Mettre à jour SEARCH_CONFIG
+            if 'budget_min' in user_config:
+                SEARCH_CONFIG['budget_min'] = user_config['budget_min']
+            if 'budget_max' in user_config:
+                SEARCH_CONFIG['budget_max'] = user_config['budget_max']
+            if 'dpe_max' in user_config:
+                SEARCH_CONFIG['dpe_max'] = user_config['dpe_max']
+            if 'surface_min' in user_config:
+                SEARCH_CONFIG['surface_min'] = user_config['surface_min']
+            if 'zones' in user_config:
+                SEARCH_CONFIG['zones'] = user_config['zones']
+            
+            logger.info(f"Config utilisateur chargée: {SEARCH_CONFIG}")
+        except Exception as e:
+            logger.warning(f"Impossible de charger user_config.json: {e}")
+
+# Charger la config au démarrage
+load_user_config()
+
 
 # ============================================================================
 # ROUTES - PAGES PRINCIPALES
@@ -197,7 +227,7 @@ def api_scrape():
     """Lancer un scraping avec les paramètres de configuration"""
     try:
         data = request.json
-        source = data.get('source', 'all')
+        source = data.get('source', 'all').lower()  # Normaliser en minuscules
         
         # Utiliser les paramètres de configuration actuels
         budget_min = SEARCH_CONFIG.get('budget_min', 200000)

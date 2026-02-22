@@ -1,12 +1,12 @@
 {
-  "budget_min": 150000,
-  "budget_max": 350000,
+  "budget_min": 50000,
+  "budget_max": 800000,
   "dpe_max": "C",
-  "surface_min": null,
+  "surface_min": 35,
   "zones": [
     "Paris"
   ],
-  "email": null,
-  "report_time": null,
-  "email_notifications": null
+  "email": "test@example.com",
+  "report_time": "10:00",
+  "email_notifications": true
 }

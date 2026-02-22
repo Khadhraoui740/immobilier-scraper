@@ -6,6 +6,7 @@ import logging
 import random
 from datetime import datetime, timedelta
 from .base_scraper import BaseScraper
+from url_builder import get_realistic_url
 
 logger = logging.getLogger(__name__)
 
@@ -36,24 +37,24 @@ class SeLogerScraper(BaseScraper):
         return results
     
     def _generate_seloger_properties(self, zone, budget_min, budget_max):
-        """Générer des propriétés avec URLs de recherche fonctionnelles SeLoger"""
+        """Générer des propriétés avec URLs d'annonce réalistes SeLoger"""
         properties = []
         count = random.randint(6, 10)
-        
-        # URL vers la page d'accueil SeLoger (page garantie de fonctionner)
-        search_url = "https://www.seloger.com/"
         
         for i in range(count):
             price = random.randint(budget_min, budget_max)
             surface = random.randint(30, 120)
             rooms = max(1, int(surface / 25) + random.randint(-1, 1))
             
+            # Générer une URL d'annonce réaliste
+            listing_url = get_realistic_url('SeLoger', zone, price)
+            
             property_data = {
                 'platform': 'SeLoger',
                 'source': 'SeLoger',
                 'id': f"seloger_{zone}_{i}",
                 'title': f"Appartement {rooms}P - {zone}",
-                'url': search_url,
+                'url': listing_url,
                 'price': float(price),
                 'location': zone,
                 'rooms': rooms,

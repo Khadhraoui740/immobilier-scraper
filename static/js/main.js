@@ -72,6 +72,47 @@ async function testEmail() {
     }
 }
 
+// Fonctions de gestion de la base de données
+async function optimizeDB() {
+    if (!confirm('Ceci peut prendre quelques secondes...')) return;
+    
+    const result = await apiCall('/api/db/optimize', 'POST');
+    if (result && result.success) {
+        showNotification('Base de données optimisée!', 'success');
+        if (typeof loadStats === 'function') {
+            loadStats();
+        }
+    } else {
+        showNotification('Erreur lors de l\'optimisation', 'error');
+    }
+}
+
+async function cleanupDB() {
+    if (!confirm('Ceci supprimera les doublons. Continuer?')) return;
+    
+    const result = await apiCall('/api/db/cleanup', 'POST');
+    if (result && result.success) {
+        showNotification(result.message || 'Nettoyage effectué!', 'success');
+        if (typeof loadStats === 'function') {
+            loadStats();
+        }
+    } else {
+        showNotification('Erreur lors du nettoyage', 'error');
+    }
+}
+
+async function resetDB() {
+    if (!confirm('⚠️ ATTENTION: Ceci supprimera TOUTES les données!\n\nÊtes-vous vraiment sûr?')) return;
+    
+    const result = await apiCall('/api/db/reset', 'POST');
+    if (result && result.success) {
+        showNotification('Base de données réinitialisée!', 'success');
+        setTimeout(() => location.reload(), 1000);
+    } else {
+        showNotification('Erreur lors de la réinitialisation', 'error');
+    }
+}
+
 async function startScheduler() {
     const result = await apiCall('/api/scheduler/start', 'POST');
     
