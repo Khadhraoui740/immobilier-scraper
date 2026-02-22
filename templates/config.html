@@ -177,6 +177,16 @@
 </div>
 
 <script>
+// Mapping entre codes postaux et noms de zones
+const ZONE_MAPPING = {
+    '75': 'Paris',
+    '92': 'Hauts-de-Seine',
+    '94': 'Val-de-Marne',
+    '91': 'Essonne',
+    '77': 'Seine-et-Marne',
+    '78': 'Yvelines'
+};
+
 // Charger la configuration
 async function loadConfig() {
     try {
@@ -193,10 +203,11 @@ async function loadConfig() {
             document.getElementById('reportTime').value = config.report_time || '09:00';
             document.getElementById('emailNotifications').checked = config.email_notifications !== false;
             
-            // Zones
-            if (config.zones) {
+            // Zones - mapper les noms aux codes postaux
+            if (config.zones && config.zones.length > 0) {
                 document.querySelectorAll('[id^="zone"]').forEach(el => {
-                    el.checked = config.zones.includes(el.value);
+                    const zoneName = ZONE_MAPPING[el.value];
+                    el.checked = config.zones.includes(zoneName);
                 });
             }
             
@@ -212,7 +223,10 @@ async function loadConfig() {
 async function saveConfig() {
     const zones = [];
     document.querySelectorAll('[id^="zone"]:checked').forEach(el => {
-        zones.push(el.value);
+        const zoneName = ZONE_MAPPING[el.value];
+        if (zoneName) {
+            zones.push(zoneName);
+        }
     });
     
     const config = {

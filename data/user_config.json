@@ -1,12 +1,14 @@
 {
-  "budget_min": 50000,
-  "budget_max": 800000,
-  "dpe_max": "C",
-  "surface_min": 35,
+  "budget_min": 0,
+  "budget_max": 150000,
+  "dpe_max": "D",
+  "surface_min": 30,
   "zones": [
-    "Paris"
+    "Paris",
+    "Hauts-de-Seine",
+    "Val-de-Marne"
   ],
-  "email": "test@example.com",
-  "report_time": "10:00",
+  "email": "khadhraoui.jalel@gmail.com",
+  "report_time": "09:00",
   "email_notifications": true
 }
