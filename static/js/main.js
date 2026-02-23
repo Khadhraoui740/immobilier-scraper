@@ -183,6 +183,8 @@ async function doSearch() {
                 const dpe = p.dpe || 'N/A';
                 const dpeClass = dpe && typeof dpe === 'string' ? ('dpe-' + dpe.toLowerCase()) : 'dpe-na';
                 const sourceBadge = (p.source || 'Unknown').toString().toLowerCase().replace(/\s+/g, '-');
+                const location = p.location || 'Non spécifiée';
+                const dateHtml = p.posted_date ? new Date(p.posted_date).toLocaleDateString('fr-FR') : 'N/A';
 
                 html += `
                     <div class="result-item card">
@@ -190,6 +192,8 @@ async function doSearch() {
                         Prix: ${priceHtml} | 
                         Surface: ${surfaceHtml} | 
                         DPE: <span class="dpe ${dpeClass}">${dpe}</span><br>
+                        Zone: ${location} | 
+                        Publié: ${dateHtml}<br>
                         Source: <span class="badge badge-${sourceBadge}">${p.source || 'Inconnu'}</span>
                     </div>
                 `;

@@ -14,6 +14,12 @@
                 <option value="visité">Visité</option>
                 <option value="rejeté">Rejeté</option>
             </select>
+            <select id="sort-filter" class="filter-input" onchange="updateSort(this.value)">
+                <option value="date_desc" {% if sort_by == 'date_desc' %}selected{% endif %}>Plus récentes</option>
+                <option value="date_asc" {% if sort_by == 'date_asc' %}selected{% endif %}>Plus anciennes</option>
+                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
+                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Prix croissant</option>
+            </select>
         </div>
 
         <div class="properties-grid">
@@ -25,8 +31,9 @@
                 </div>
                 
                 <div class="property-body">
-                    <p><strong>Prix:</strong> {{ prop.price or 'N/A' }}</p>
-                    <p><strong>Localisation:</strong> {{ prop.location or 'N/A' }}</p>
+                    <p><strong>Prix:</strong> {{ prop.price }}</p>
+                    <p><strong>&#128205; Commune:</strong> {{ prop.location }}</p>
+                    <p><strong>&#128197; Publié:</strong> {{ prop.posted_date_formatted }}</p>
                     <p><strong>Statut:</strong> {{ prop.status or 'N/A' }}</p>
                     <p><strong>DPE:</strong> <span class="dpe dpe-{{ (prop.dpe or 'N/A')|lower }}">{{ prop.dpe or 'N/A' }}</span></p>
                 </div>
@@ -49,19 +56,26 @@
 
         <div class="pagination">
             {% if page > 1 %}
-            <a href="?page={{ page - 1 }}" class="btn btn-sm">← Précédent</a>
+            <a href="?page={{ page - 1 }}&sort={{ sort_by }}" class="btn btn-sm">← Précédent</a>
             {% endif %}
             
             <span>Page {{ page }} / {{ pages }}</span>
             
             {% if page < pages %}
-            <a href="?page={{ page + 1 }}" class="btn btn-sm">Suivant →</a>
+            <a href="?page={{ page + 1 }}&sort={{ sort_by }}" class="btn btn-sm">Suivant →</a>
             {% endif %}
         </div>
     </div>
 </div>
 
 <script>
+function updateSort(sortValue) {
+    const url = new URL(window.location);
+    url.searchParams.set('sort', sortValue);
+    url.searchParams.set('page', '1'); // Reset à la page 1 lors du tri
+    window.location.href = url.toString();
+}
+
 function editProperty(id) {
     fetch(`/api/property/${id}`)
     .then(r => r.json())

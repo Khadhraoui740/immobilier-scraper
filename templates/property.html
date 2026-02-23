@@ -10,6 +10,9 @@
             <p><strong>Localisation:</strong> {{ prop.location or 'N/A' }}</p>
             <p><strong>Surface:</strong> {{ prop.surface or 'N/A' }} m²</p>
             <p><strong>DPE:</strong> {{ prop.dpe or 'N/A' }}</p>
+            {% if prop.posted_date %}
+            <p><strong>Date de publication:</strong> {{ prop.posted_date.strftime('%d/%m/%Y') if prop.posted_date is not string else prop.posted_date }}</p>
+            {% endif %}
             <p><strong>Description:</strong><br>{{ prop.description or '' }}</p>
 
             <div class="actions">

@@ -1,136 +1,113 @@
 """
-URL Builder pour générer les URLs d'annonces réalistes
-Crée des URLs basées sur les formats des sites immobiliers
+URL Builder pour générer les URLs fonctionnelles vers les sites immobiliers
+Crée des URLs de recherche réelles qui fonctionnent
 """
 import logging
+from urllib.parse import quote
 
 logger = logging.getLogger(__name__)
 
 
+# Mapping des départements vers codes postaux
+DEPT_TO_CODE = {
+    'Paris': '75',
+    'Hauts-de-Seine': '92',
+    'Val-de-Marne': '94',
+    'Essonne': '91',
+    'Seine-et-Marne': '77',
+    'Yvelines': '78'
+}
+
+
 class URLBuilder:
-    """Builder pour générer les URLs d'annonces correctes"""
+    """Builder pour générer les URLs de recherche fonctionnelles"""
     
     @staticmethod
-    def seloger_listing_url(listing_id: int, zone: str = "") -> str:
-        """Générer une URL d'annonce SeLoger avec ID réaliste
-        
-        Formats:
-        - https://www.seloger.com/annonces/achat/appartement/paris-75/xxxxx.htm
-        - https://www.seloger.com/annonces/location/maison/boulogne-92/11111.htm
-        """
-        # Remplacer les espaces par des tirets
-        zone_slug = zone.lower().replace(' ', '-').replace('_', '-')
-        
-        return f"https://www.seloger.com/annonces/achat/appartement/{zone_slug}/{listing_id}.htm"
-    
-    @staticmethod
-    def pap_listing_url(listing_id: int, zone: str = "") -> str:
-        """Générer une URL d'annonce PAP avec ID réaliste
-        
-        Formats:
-        - https://www.pap.fr/annonces/achat/appartement/paris-75/11111
-        - https://www.pap.fr/annonces/location/maison/boulogne-92-pour-1400-eur-par-mois/22222
-        """
-        zone_slug = zone.lower().replace(' ', '-').replace('_', '-')
-        
-        return f"https://www.pap.fr/annonces/achat/appartement/{zone_slug}/{listing_id}"
-    
-    @staticmethod
-    def leboncoin_listing_url(listing_id: int, zone: str = "") -> str:
-        """Générer une URL d'annonce LeBonCoin avec ID réaliste
-        
-        Formats:
-        - https://www.leboncoin.fr/immobilier/11111111111.htm
-        - https://www.leboncoin.fr/immobilier/achat/appartements/ile-de-france/paris/11111111111.htm
-        """
-        # LeBonCoin utilise surtout des IDs numériques longs
-        return f"https://www.leboncoin.fr/immobilier/{listing_id}.htm"
-    
-    @staticmethod
-    def bienici_listing_url(listing_id: int, zone: str = "") -> str:
-        """Générer une URL d'annonce BienIci avec ID réaliste
-        
-        Formats:
-        - https://www.bienici.com/annonce-immobiliere/11111111
-        - https://www.bienici.com/annonce-immobiliere/achat-appartement-paris/11111111
-        """
-        return f"https://www.bienici.com/annonce-immobiliere/{listing_id}"
-    
-    @staticmethod
-    def dvf_transaction_url(transaction_id: str, zone: str = "") -> str:
-        """Générer une URL de transaction DVF
+    def seloger_search_url(zone: str = "", price_max: int = 150000) -> str:
+        """Générer une URL de recherche SeLoger fonctionnelle
         
         Format:
-        - https://dvf.gouv.fr/transaction/75/2024/123456/XXXXX
+        - https://www.seloger.com/immobilier/achat/immo-paris-75/
         """
-        return f"https://dvf.gouv.fr/transaction/{transaction_id}"
+        # Obtenir le code département
+        dept_code = DEPT_TO_CODE.get(zone, '75')
+        zone_slug = zone.lower().replace(' ', '-').replace('_', '-')
+        
+        return f"https://www.seloger.com/immobilier/achat/immo-{zone_slug}-{dept_code}/"
     
     @staticmethod
-    def generate_realistic_id(source: str, zone: str = "", price: float = 0) -> str:
-        """Générer un ID réaliste basé sur la source
+    def pap_search_url(zone: str = "", price_max: int = 150000) -> str:
+        """Générer une URL de recherche PAP fonctionnelle
         
-        Args:
-            source: SeLoger, PAP, LeBonCoin, BienIci, DVF
-            zone: Zone de la propriété
-            price: Prix pour générer un ID cohérent
-            
-        Returns:
-            ID réaliste pour la plateforme
+        Format:
+        - https://www.pap.fr/annonce/vente-appartement-paris-75
         """
-        import random
-        import hashlib
+        dept_code = DEPT_TO_CODE.get(zone, '75')
+        zone_slug = zone.lower().replace(' ', '-').replace('_', '-')
         
-        # Générer un hash basé sur zone et prix pour chaque call
-        seed = f"{source}-{zone}-{price}-{random.randint(1000, 9999)}"
-        hash_obj = hashlib.md5(seed.encode())
-        hash_int = int(hash_obj.hexdigest(), 16)
+        return f"https://www.pap.fr/annonce/vente-appartement-{zone_slug}-{dept_code}"
+    
+    @staticmethod
+    def leboncoin_search_url(zone: str = "", price_max: int = 150000) -> str:
+        """Générer une URL de recherche LeBonCoin fonctionnelle
         
-        if source == 'SeLoger':
-            # SeLoger: IDs de 5-7 chiffres
-            return str(hash_int % 9900000 + 100000)
+        Format:
+        - https://www.leboncoin.fr/recherche?category=9&locations=Paris_75000
+        """
+        dept_code = DEPT_TO_CODE.get(zone, '75')
+        zone_param = quote(f"{zone}_{dept_code}000")
         
-        elif source == 'PAP':
-            # PAP: IDs numériques
-            return str(hash_int % 99900000 + 100000)
+        return f"https://www.leboncoin.fr/recherche?category=9&locations={zone_param}"
+    
+    @staticmethod
+    def bienici_search_url(zone: str = "", price_max: int = 150000) -> str:
+        """Générer une URL de recherche BienIci fonctionnelle
         
-        elif source == 'LeBonCoin':
-            # LeBonCoin: IDs très longs (11+ chiffres)
-            return str(hash_int % 99999999999 + 10000000000)
+        Format:
+        - https://www.bienici.com/recherche/achat/paris-75000
+        """
+        dept_code = DEPT_TO_CODE.get(zone, '75')
+        zone_slug = zone.lower().replace(' ', '-').replace('_', '-')
         
-        elif source == 'BienIci':
-            # BienIci: IDs numériques (8+ chiffres)
-            return str(hash_int % 990000000 + 10000000)
+        return f"https://www.bienici.com/recherche/achat/{zone_slug}-{dept_code}000"
+    
+    @staticmethod
+    def dvf_transaction_url(zone: str = "") -> str:
+        """Générer une URL vers les données DVF
         
-        elif source == 'DVF':
-            # DVF: Format de transaction
-            dept = zone.split('-')[-1] if '-' in zone else '75'
-            year = '2024'
-            transaction_num = str(hash_int % 999999).zfill(6)
-            return f"{dept}/{year}/{transaction_num}"
-        
-        else:
-            return str(hash_int % 10000000)
+        Format:
+        - https://app.dvf.etalab.gouv.fr/
+        """
+        return "https://app.dvf.etalab.gouv.fr/"
 
 
 # Créer des convertisseurs pour chaque scraper existant
 def get_realistic_url(source: str, zone: str = "", price: float = 0) -> str:
-    """Obtenir une URL réaliste pour une source donnée
+    """Obtenir une URL de recherche fonctionnelle pour une source donnée
     
-    Cette fonction crée des URLs d'annonce au lieu de simples URLs de recherche
+    Cette fonction crée des URLs de recherche qui fonctionnent vraiment
+    
+    Args:
+        source: SeLoger, PAP, LeBonCoin, BienIci, DVF
+        zone: Zone/département de la propriété
+        price: Prix pour la recherche
+        
+    Returns:
+        URL de recherche fonctionnelle
     """
-    listing_id = URLBuilder.generate_realistic_id(source, zone, price)
+    price_max = int(price * 1.5) if price else 150000
     
     url_builders = {
-        'SeLoger': lambda id: URLBuilder.seloger_listing_url(id, zone),
-        'PAP': lambda id: URLBuilder.pap_listing_url(id, zone),
-        'LeBonCoin': lambda id: URLBuilder.leboncoin_listing_url(id, zone),
-        'BienIci': lambda id: URLBuilder.bienici_listing_url(id, zone),
-        'DVF': lambda id: URLBuilder.dvf_transaction_url(id, zone),
+        'SeLoger': lambda: URLBuilder.seloger_search_url(zone, price_max),
+        'PAP': lambda: URLBuilder.pap_search_url(zone, price_max),
+        'LeBonCoin': lambda: URLBuilder.leboncoin_search_url(zone, price_max),
+        'BienIci': lambda: URLBuilder.bienici_search_url(zone, price_max),
+        'DVF': lambda: URLBuilder.dvf_transaction_url(zone),
     }
     
     builder = url_builders.get(source)
     if builder:
-        return builder(listing_id)
+        return builder()
     
     # Fallback
-    return f"https://{source.lower()}.com/search"
+    return f"https://www.{source.lower()}.com"

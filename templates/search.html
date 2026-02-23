@@ -73,10 +73,12 @@ function doSearch() {
             let html = `<h3>${data.count} résultats trouvés</h3>`;
             html += '<div class="results-list">';
             data.properties.forEach(p => {
+                const dateHtml = p.posted_date ? new Date(p.posted_date).toLocaleDateString('fr-FR') : 'N/A';
                 html += `
                     <div class="result-item">
                         <strong>${p.title}</strong><br>
                         Prix: ${p.price}€ | Surface: ${p.surface}m² | DPE: ${p.dpe}<br>
+                        Zone: ${p.location || 'Non spécifiée'} | Publié: ${dateHtml}<br>
                         Source: ${p.source}
                     </div>
                 `;

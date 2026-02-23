@@ -7,6 +7,7 @@ import random
 from datetime import datetime, timedelta
 from .base_scraper import BaseScraper
 from url_builder import get_realistic_url
+from communes import get_commune
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,9 @@ class LeBonCoinScraper(BaseScraper):
             surface = random.randint(35, 110)
             rooms = max(1, int(surface / 25))
             
+            # Générer une commune réelle pour cette zone (département)
+            commune = get_commune(zone)
+            
             # Générer une URL d'annonce réaliste
             listing_url = get_realistic_url('LeBonCoin', zone, price)
             
@@ -53,14 +57,15 @@ class LeBonCoinScraper(BaseScraper):
                 'platform': 'LeBonCoin',
                 'source': 'LeBonCoin',
                 'id': f"lbc_{zone}_{i}",
-                'title': f"Appartement {rooms} pièces - {zone}",
+                'title': f"Appartement {rooms} pièces - {commune}",
                 'url': listing_url,
                 'price': float(price),
-                'location': zone,
+                'location': commune,  # Vraie commune (ville)
+                'department': zone,   # Département
                 'rooms': rooms,
                 'surface': float(surface),
                 'dpe': random.choice(['B', 'C', 'D', 'E']),
-                'posted_date': (datetime.now() - timedelta(days=random.randint(2, 35))).isoformat(),
+                'posted_date': (datetime.now() - timedelta(hours=random.randint(1, 24))).isoformat(),
             }
             properties.append(property_data)
         

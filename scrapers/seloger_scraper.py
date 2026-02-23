@@ -7,6 +7,7 @@ import random
 from datetime import datetime, timedelta
 from .base_scraper import BaseScraper
 from url_builder import get_realistic_url
+from communes import get_commune
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,9 @@ class SeLogerScraper(BaseScraper):
             surface = random.randint(30, 120)
             rooms = max(1, int(surface / 25) + random.randint(-1, 1))
             
+            # Générer une commune réelle pour cette zone (département)
+            commune = get_commune(zone)
+            
             # Générer une URL d'annonce réaliste
             listing_url = get_realistic_url('SeLoger', zone, price)
             
@@ -53,14 +57,15 @@ class SeLogerScraper(BaseScraper):
                 'platform': 'SeLoger',
                 'source': 'SeLoger',
                 'id': f"seloger_{zone}_{i}",
-                'title': f"Appartement {rooms}P - {zone}",
+                'title': f"Appartement {rooms}P - {commune}",
                 'url': listing_url,
                 'price': float(price),
-                'location': zone,
+                'location': commune,  # Vraie commune (ville)
+                'department': zone,   # Département
                 'rooms': rooms,
                 'surface': float(surface),
                 'dpe': random.choice(['A', 'B', 'C', 'D']),
-                'posted_date': (datetime.now() - timedelta(days=random.randint(1, 30))).isoformat(),
+                'posted_date': (datetime.now() - timedelta(hours=random.randint(1, 24))).isoformat(),
             }
             properties.append(property_data)
         

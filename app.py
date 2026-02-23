@@ -105,32 +105,60 @@ def dashboard():
 def properties():
     """Page des propriétés"""
     page = request.args.get('page', 1, type=int)
+    sort_by = request.args.get('sort', 'date_desc')  # date_desc, date_asc, price_desc, price_asc
     limit = 20
     offset = (page - 1) * limit
     
     props = db.get_properties()
+    
+    # Trier les propriétés
+    if sort_by == 'date_desc':
+        props = sorted(props, key=lambda x: x['posted_date'] or '', reverse=True)
+    elif sort_by == 'date_asc':
+        props = sorted(props, key=lambda x: x['posted_date'] or '')
+    elif sort_by == 'price_desc':
+        props = sorted(props, key=lambda x: x['price'] or 0, reverse=True)
+    elif sort_by == 'price_asc':
+        props = sorted(props, key=lambda x: x['price'] or 0)
+    
     total = len(props)
     props = props[offset:offset + limit]
     
     # Convertir Row objects en dictionnaires
+    from datetime import datetime
     properties_list = []
     for p in props:
+        # Formater la date de publication
+        posted_date_str = ''
+        if p['posted_date']:
+            try:
+                if isinstance(p['posted_date'], str):
+                    date_obj = datetime.fromisoformat(p['posted_date'])
+                    posted_date_str = date_obj.strftime('%d/%m/%Y')
+                else:
+                    posted_date_str = p['posted_date'].strftime('%d/%m/%Y')
+            except:
+                posted_date_str = str(p['posted_date'])[:10]
+        
         properties_list.append({
             'id': p['id'],
             'title': p['title'],
             'price': f"{p['price']:,} €" if p['price'] else 'N/A',
-            'location': p['location'],
+            'price_raw': p['price'] or 0,
+            'location': p['location'] or 'Non spécifiée',
             'source': p['source'],
             'dpe': p['dpe'] or 'N/A',
             'status': p['status'],
-            'url': p['url']
+            'url': p['url'],
+            'posted_date_formatted': posted_date_str or 'Non spécifiée'
         })
     
     return render_template('properties.html', 
                          properties=properties_list,
                          page=page,
                          total=total,
-                         pages=(total + limit - 1) // limit)
+                         pages=(total + limit - 1) // limit,
+                         sort_by=sort_by)
 
 
 @app.route('/dashboard')
@@ -304,7 +332,8 @@ def api_search():
                 'location': p['location'],
                 'dpe': p['dpe'],
                 'surface': p['surface'],
-                'source': p['source']
+                'source': p['source'],
+                'posted_date': p['posted_date']
             })
         
         return jsonify({
@@ -760,22 +789,22 @@ def server_error(error):
 # ============================================================================
 
 if __name__ == '__main__':
-    print("""
-╔════════════════════════════════════════════════════════════════════════════╗
-║                   INTERFACE WEB D'ADMINISTRATION                          ║
-║                                                                            ║
-║  🌐 Accessible à: http://localhost:5000                                  ║
-║                                                                            ║
-║  ✓ Dashboard du scraping                                                  ║
-║  ✓ Gestion des propriétés                                                ║
-║  ✓ Recherche avancée                                                     ║
-║  ✓ Configuration des sites                                               ║
-║  ✓ Planificateur de tâches                                               ║
-║  ✓ Statistiques en temps réel                                            ║
-║  ✓ Gestion des alertes                                                   ║
-║                                                                            ║
-║  Appuyer sur Ctrl+C pour arrêter                                         ║
-╚════════════════════════════════════════════════════════════════════════════╝
-    """)
+    print("="*80)
+    print("INTERFACE WEB D'ADMINISTRATION - Immobilier Scraper")
+    print("="*80)
+    print("")
+    print("  Accessible a: http://localhost:5000")
+    print("")
+    print("  - Dashboard du scraping")
+    print("  - Gestion des proprietes")
+    print("  - Recherche avancee")
+    print("  - Configuration des sites")
+    print("  - Planificateur de taches")
+    print("  - Statistiques en temps reel")
+    print("  - Gestion des alertes")
+    print("")
+    print("  Appuyer sur Ctrl+C pour arreter")
+    print("="*80)
+    print("")
     
     app.run(debug=True, host='0.0.0.0', port=5000)

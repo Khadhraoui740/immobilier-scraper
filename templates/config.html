@@ -191,8 +191,11 @@ const ZONE_MAPPING = {
 async function loadConfig() {
     try {
         const result = await apiCall('/api/config/get', 'GET');
+        console.log('[loadConfig] API response:', result);
+        
         if (result && result.success) {
             const config = result.config;
+            console.log('[loadConfig] Config chargee:', config);
             
             // Remplir les champs
             document.getElementById('budgetMin').value = config.budget_min || 200000;
@@ -203,31 +206,48 @@ async function loadConfig() {
             document.getElementById('reportTime').value = config.report_time || '09:00';
             document.getElementById('emailNotifications').checked = config.email_notifications !== false;
             
+            console.log('[loadConfig] Budget mis a jour:', config.budget_min, '-', config.budget_max);
+            
             // Zones - mapper les noms aux codes postaux
+            console.log('[loadConfig] Zones dans config:', config.zones);
+            console.log('[loadConfig] ZONE_MAPPING:', ZONE_MAPPING);
+            
             if (config.zones && config.zones.length > 0) {
                 document.querySelectorAll('[id^="zone"]').forEach(el => {
                     const zoneName = ZONE_MAPPING[el.value];
-                    el.checked = config.zones.includes(zoneName);
+                    const shouldCheck = config.zones.includes(zoneName);
+                    el.checked = shouldCheck;
+                    console.log(`[loadConfig] Zone ${el.value} (${zoneName}): checked=${shouldCheck}`);
                 });
+            } else {
+                console.log('[loadConfig] Zones vides - aucune zone cochee');
+                document.querySelectorAll('[id^="zone"]').forEach(el => el.checked = false);
             }
             
             // Charger les stats
             loadStats();
+        } else {
+            console.error('[loadConfig] Erreur API:', result);
         }
     } catch (e) {
-        console.error('Erreur chargement config:', e);
+        console.error('[loadConfig] Exception:', e);
     }
 }
 
 // Sauvegarder la configuration
 async function saveConfig() {
+    console.log('[saveConfig] Debut');
+    
     const zones = [];
     document.querySelectorAll('[id^="zone"]:checked').forEach(el => {
         const zoneName = ZONE_MAPPING[el.value];
         if (zoneName) {
             zones.push(zoneName);
+            console.log(`[saveConfig] Zone ajoute: ${el.value} -> ${zoneName}`);
         }
     });
+    
+    console.log('[saveConfig] Zones finales:', zones);
     
     const config = {
         budget_min: parseInt(document.getElementById('budgetMin').value),
@@ -241,7 +261,11 @@ async function saveConfig() {
         zones: zones
     };
     
+    console.log('[saveConfig] Config a envoyer:', config);
+    
     const result = await apiCall('/api/config/save', 'POST', config);
+    
+    console.log('[saveConfig] Reponse API:', result);
     
     if (result && result.success) {
         showNotification('Configuration enregistrée avec succès!', 'success');
