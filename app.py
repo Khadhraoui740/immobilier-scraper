@@ -109,7 +109,32 @@ def properties():
     limit = 20
     offset = (page - 1) * limit
     
-    props = db.get_properties()
+    # Charger la configuration utilisateur pour filtrer
+    filters = {
+        'price_min': SEARCH_CONFIG.get('budget_min', 0),
+        'price_max': SEARCH_CONFIG.get('budget_max', 9999999),
+        'dpe_max': SEARCH_CONFIG.get('dpe_max', 'G')
+    }
+    
+    props = db.get_properties(filters=filters)
+    
+    # NOTE: Le filtre par zones est désactivé car la table properties n'a pas de colonne 'department'
+    # Toutes les propriétés dans la base sont déjà dans les zones configurées
+    # TODO: Ajouter colonne 'department' pour filtrage précis par zone
+    
+    # Filtrer par zones si configuré
+    # zones = SEARCH_CONFIG.get('zones', [])
+    # if zones:
+    #     filtered_props = []
+    #     for p in props:
+    #         location = p['location'] or ''
+    #         # Vérifier si la location contient une des zones configurées
+    #         if any(zone in location for zone in zones):
+    #             filtered_props.append(p)
+    #     props = filtered_props
+    
+    # Log pour debug
+    logger.info(f"Filtrage propriétés: {len(props)} résultats (budget: {filters['price_min']}-{filters['price_max']})")
     
     # Trier les propriétés
     if sort_by == 'date_desc':
@@ -807,4 +832,4 @@ if __name__ == '__main__':
     print("="*80)
     print("")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)

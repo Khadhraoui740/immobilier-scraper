@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from .base_scraper import BaseScraper
 from url_builder import get_realistic_url
 from communes import get_commune
+from prix_realistes import get_prix_realiste, get_surface_realiste
 
 logger = logging.getLogger(__name__)
 
@@ -47,12 +48,18 @@ class BienIciScraper(BaseScraper):
         count = random.randint(5, 8)
         
         for i in range(count):
-            price = random.randint(budget_min, budget_max)
-            surface = random.randint(35, 110)
+            surface = get_surface_realiste()
             rooms = max(1, int(surface / 25))
             
             # Générer une commune réelle pour cette zone (département)
             commune = get_commune(zone)
+            
+            # Calculer le prix réaliste
+            price = get_prix_realiste(commune, surface)
+            
+            # Filtrer par budget
+            if price < budget_min or price > budget_max:
+                continue
             
             # Générer une URL d'annonce réaliste
             listing_url = get_realistic_url('BienIci', zone, price)
