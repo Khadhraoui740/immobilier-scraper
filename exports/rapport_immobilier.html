@@ -1,0 +1,666 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport Immobilier - Budget 130k EUR</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        h2 {
+            color: #667eea;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        tr.accessible {
+            background: #e8f5e9;
+        }
+        .price {
+            font-weight: 600;
+            color: #2196F3;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-good {
+            background: #4CAF50;
+            color: white;
+        }
+        .badge-fair {
+            background: #FF9800;
+            color: white;
+        }
+        .badge-poor {
+            background: #f44336;
+            color: white;
+        }
+        .recommendation {
+            background: #FFF9C4;
+            border-left: 4px solid #FBC02D;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .recommendation strong {
+            color: #F57F17;
+        }
+        .footer {
+            text-align: center;
+            color: #999;
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Rapport Immobilier Île-de-France</h1>
+        <div class="subtitle">Analyse pour Budget Maximum: 130,000 EUR</div>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">TOTAL COMMUNES</div>
+                <div class="stat-value">41</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">TOTAL ANNONCES</div>
+                <div class="stat-value">61</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">PRIX MOYEN</div>
+                <div class="stat-value">283 486 €</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">COMMUNES ACCESSIBLE (≤130k)</div>
+                <div class="stat-value">6</div>
+            </div>
+        </div>
+
+        <div class="recommendation">
+            <strong>💡 RECOMMANDATION:</strong> 
+            Sur les 41 communes analysées, 6 communes proposent au moins une propriété dans votre budget de 130,000 EUR. 
+            Le meilleur rapport qualité-prix se trouve à <strong>Lagny-sur-Marne</strong> (2,982 EUR/m²) avec un prix moyen de 113,326 EUR.
+        </div>
+
+        <h2>📍 TOP 10 COMMUNES - BUDGET 130,000 EUR</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Classement</th>
+                    <th>Commune</th>
+                    <th>Annonces</th>
+                    <th>Prix Moyen</th>
+                    <th>Prix Min</th>
+                    <th>Prix Max</th>
+                    <th>€/m²</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr class="accessible">
+                    <td style="text-align: center; font-weight: bold;">1</td>
+                    <td><strong>Poissy</strong></td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">103,651 €</td>
+                    <td class="price">102,181 €</td>
+                    <td class="price">105,121 €</td>
+                    <td style="text-align: center;">3,189</td>
+                    <td><span class="badge badge-good">✓ Accessible</span></td>
+                </tr>
+
+                <tr class="accessible">
+                    <td style="text-align: center; font-weight: bold;">2</td>
+                    <td><strong>Lagny-sur-Marne</strong></td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">113,326 €</td>
+                    <td class="price">109,993 €</td>
+                    <td class="price">116,658 €</td>
+                    <td style="text-align: center;">2,982</td>
+                    <td><span class="badge badge-good">✓ Accessible</span></td>
+                </tr>
+
+                <tr class="accessible">
+                    <td style="text-align: center; font-weight: bold;">3</td>
+                    <td><strong>Sartrouville</strong></td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">113,416 €</td>
+                    <td class="price">113,416 €</td>
+                    <td class="price">113,416 €</td>
+                    <td style="text-align: center;">3,781</td>
+                    <td><span class="badge badge-good">✓ Accessible</span></td>
+                </tr>
+
+                <tr class="accessible">
+                    <td style="text-align: center; font-weight: bold;">4</td>
+                    <td><strong>Massy</strong></td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">113,925 €</td>
+                    <td class="price">113,925 €</td>
+                    <td class="price">113,925 €</td>
+                    <td style="text-align: center;">3,452</td>
+                    <td><span class="badge badge-good">✓ Accessible</span></td>
+                </tr>
+
+                <tr class="accessible">
+                    <td style="text-align: center; font-weight: bold;">5</td>
+                    <td><strong>Chelles</strong></td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">116,286 €</td>
+                    <td class="price">116,286 €</td>
+                    <td class="price">116,286 €</td>
+                    <td style="text-align: center;">3,876</td>
+                    <td><span class="badge badge-good">✓ Accessible</span></td>
+                </tr>
+
+                <tr class="accessible">
+                    <td style="text-align: center; font-weight: bold;">6</td>
+                    <td><strong>Rambouillet</strong></td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">126,992 €</td>
+                    <td class="price">126,992 €</td>
+                    <td class="price">126,992 €</td>
+                    <td style="text-align: center;">3,024</td>
+                    <td><span class="badge badge-good">✓ Accessible</span></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <h2>⭐ TOP 10 - MEILLEUR RAPPORT QUALITÉ-PRIX (€/m²)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Classement</th>
+                    <th>Commune</th>
+                    <th>€/m²</th>
+                    <th>Prix Moyen</th>
+                    <th>Annonces</th>
+                    <th>Recommandation</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">1</td>
+                    <td><strong>Lagny-sur-Marne</strong></td>
+                    <td class="price" style="text-align: center;">2,982 €/m²</td>
+                    <td class="price">113,326 €</td>
+                    <td style="text-align: center;">2</td>
+                    <td><span class="badge badge-good">Excellent</span></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">2</td>
+                    <td><strong>Rambouillet</strong></td>
+                    <td class="price" style="text-align: center;">3,024 €/m²</td>
+                    <td class="price">126,992 €</td>
+                    <td style="text-align: center;">1</td>
+                    <td><span class="badge badge-good">Excellent</span></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">3</td>
+                    <td><strong>Poissy</strong></td>
+                    <td class="price" style="text-align: center;">3,189 €/m²</td>
+                    <td class="price">103,651 €</td>
+                    <td style="text-align: center;">2</td>
+                    <td><span class="badge badge-good">Excellent</span></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">4</td>
+                    <td><strong>Massy</strong></td>
+                    <td class="price" style="text-align: center;">3,452 €/m²</td>
+                    <td class="price">113,925 €</td>
+                    <td style="text-align: center;">1</td>
+                    <td><span class="badge badge-good">Excellent</span></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">5</td>
+                    <td><strong>Sartrouville</strong></td>
+                    <td class="price" style="text-align: center;">3,781 €/m²</td>
+                    <td class="price">113,416 €</td>
+                    <td style="text-align: center;">1</td>
+                    <td><span class="badge badge-fair">Bon</span></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">6</td>
+                    <td><strong>Chelles</strong></td>
+                    <td class="price" style="text-align: center;">3,876 €/m²</td>
+                    <td class="price">116,286 €</td>
+                    <td style="text-align: center;">1</td>
+                    <td><span class="badge badge-fair">Bon</span></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <h2>📈 TOUTES LES COMMUNES (Triées par Prix Moyen)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Commune</th>
+                    <th>Annonces</th>
+                    <th>Prix Moyen</th>
+                    <th>Gamme de Prix</th>
+                    <th>€/m²</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr class="accessible">
+                    <td>Poissy</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">103,651 €</td>
+                    <td>102,181 € - 105,121 €</td>
+                    <td style="text-align: center;">3,189</td>
+                </tr>
+
+                <tr class="accessible">
+                    <td>Lagny-sur-Marne</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">113,326 €</td>
+                    <td>109,993 € - 116,658 €</td>
+                    <td style="text-align: center;">2,982</td>
+                </tr>
+
+                <tr class="accessible">
+                    <td>Sartrouville</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">113,416 €</td>
+                    <td>113,416 € - 113,416 €</td>
+                    <td style="text-align: center;">3,781</td>
+                </tr>
+
+                <tr class="accessible">
+                    <td>Massy</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">113,925 €</td>
+                    <td>113,925 € - 113,925 €</td>
+                    <td style="text-align: center;">3,452</td>
+                </tr>
+
+                <tr class="accessible">
+                    <td>Chelles</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">116,286 €</td>
+                    <td>116,286 € - 116,286 €</td>
+                    <td style="text-align: center;">3,876</td>
+                </tr>
+
+                <tr class="accessible">
+                    <td>Rambouillet</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">126,992 €</td>
+                    <td>126,992 € - 126,992 €</td>
+                    <td style="text-align: center;">3,024</td>
+                </tr>
+
+                <tr class="">
+                    <td>Étampes</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">135,260 €</td>
+                    <td>135,260 € - 135,260 €</td>
+                    <td style="text-align: center;">2,459</td>
+                </tr>
+
+                <tr class="">
+                    <td>Évry-Courcouronnes</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">137,812 €</td>
+                    <td>132,079 € - 143,546 €</td>
+                    <td style="text-align: center;">3,534</td>
+                </tr>
+
+                <tr class="">
+                    <td>Villeparisis</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">145,414 €</td>
+                    <td>145,414 € - 145,414 €</td>
+                    <td style="text-align: center;">2,744</td>
+                </tr>
+
+                <tr class="">
+                    <td>Cachan</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">173,728 €</td>
+                    <td>173,728 € - 173,728 €</td>
+                    <td style="text-align: center;">4,826</td>
+                </tr>
+
+                <tr class="">
+                    <td>Vincennes</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">196,216 €</td>
+                    <td>196,216 € - 196,216 €</td>
+                    <td style="text-align: center;">5,771</td>
+                </tr>
+
+                <tr class="">
+                    <td>Champigny-sur-Marne</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">204,896 €</td>
+                    <td>157,451 € - 252,342 €</td>
+                    <td style="text-align: center;">4,182</td>
+                </tr>
+
+                <tr class="">
+                    <td>Le Kremlin-Bicêtre</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">216,059 €</td>
+                    <td>216,059 € - 216,059 €</td>
+                    <td style="text-align: center;">4,501</td>
+                </tr>
+
+                <tr class="">
+                    <td>Créteil</td>
+                    <td style="text-align: center;">3</td>
+                    <td class="price">250,507 €</td>
+                    <td>180,235 € - 305,277 €</td>
+                    <td style="text-align: center;">4,421</td>
+                </tr>
+
+                <tr class="">
+                    <td>Meudon</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">254,355 €</td>
+                    <td>254,355 € - 254,355 €</td>
+                    <td style="text-align: center;">5,652</td>
+                </tr>
+
+                <tr class="">
+                    <td>Saint-Maurice</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">259,437 €</td>
+                    <td>259,437 € - 259,437 €</td>
+                    <td style="text-align: center;">5,295</td>
+                </tr>
+
+                <tr class="">
+                    <td>Villejuif</td>
+                    <td style="text-align: center;">4</td>
+                    <td class="price">264,828 €</td>
+                    <td>141,410 € - 403,827 €</td>
+                    <td style="text-align: center;">4,432</td>
+                </tr>
+
+                <tr class="">
+                    <td>Suresnes</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">283,211 €</td>
+                    <td>283,211 € - 283,211 €</td>
+                    <td style="text-align: center;">6,157</td>
+                </tr>
+
+                <tr class="">
+                    <td>Nogent-sur-Marne</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">291,584 €</td>
+                    <td>291,584 € - 291,584 €</td>
+                    <td style="text-align: center;">6,204</td>
+                </tr>
+
+                <tr class="">
+                    <td>Rueil-Malmaison</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">297,040 €</td>
+                    <td>286,472 € - 307,608 €</td>
+                    <td style="text-align: center;">7,616</td>
+                </tr>
+
+                <tr class="">
+                    <td>Châtenay-Malabry</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">301,514 €</td>
+                    <td>301,514 € - 301,514 €</td>
+                    <td style="text-align: center;">6,555</td>
+                </tr>
+
+                <tr class="">
+                    <td>Vitry-sur-Seine</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">306,804 €</td>
+                    <td>255,542 € - 358,065 €</td>
+                    <td style="text-align: center;">3,859</td>
+                </tr>
+
+                <tr class="">
+                    <td>Ivry-sur-Seine</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">320,013 €</td>
+                    <td>320,013 € - 320,013 €</td>
+                    <td style="text-align: center;">4,324</td>
+                </tr>
+
+                <tr class="">
+                    <td>Choisy-le-Roi</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">332,226 €</td>
+                    <td>332,226 € - 332,226 €</td>
+                    <td style="text-align: center;">3,257</td>
+                </tr>
+
+                <tr class="">
+                    <td>Paris 19e</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">337,667 €</td>
+                    <td>337,667 € - 337,667 €</td>
+                    <td style="text-align: center;">8,236</td>
+                </tr>
+
+                <tr class="">
+                    <td>Paris 10e</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">338,416 €</td>
+                    <td>338,416 € - 338,416 €</td>
+                    <td style="text-align: center;">9,146</td>
+                </tr>
+
+                <tr class="">
+                    <td>Thiais</td>
+                    <td style="text-align: center;">5</td>
+                    <td class="price">341,835 €</td>
+                    <td>272,591 € - 454,183 €</td>
+                    <td style="text-align: center;">4,210</td>
+                </tr>
+
+                <tr class="">
+                    <td>Issy-les-Moulineaux</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">346,911 €</td>
+                    <td>346,911 € - 346,911 €</td>
+                    <td style="text-align: center;">6,424</td>
+                </tr>
+
+                <tr class="">
+                    <td>Paris 18e</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">352,635 €</td>
+                    <td>352,635 € - 352,635 €</td>
+                    <td style="text-align: center;">9,531</td>
+                </tr>
+
+                <tr class="">
+                    <td>Joinville-le-Pont</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">356,604 €</td>
+                    <td>356,604 € - 356,604 €</td>
+                    <td style="text-align: center;">4,296</td>
+                </tr>
+
+                <tr class="">
+                    <td>Garches</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">359,600 €</td>
+                    <td>359,600 € - 359,600 €</td>
+                    <td style="text-align: center;">5,993</td>
+                </tr>
+
+                <tr class="">
+                    <td>Clamart</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">375,153 €</td>
+                    <td>375,153 € - 375,153 €</td>
+                    <td style="text-align: center;">6,150</td>
+                </tr>
+
+                <tr class="">
+                    <td>Paris 12e</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">379,598 €</td>
+                    <td>268,705 € - 490,491 €</td>
+                    <td style="text-align: center;">9,038</td>
+                </tr>
+
+                <tr class="">
+                    <td>Fontenay-sous-Bois</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">385,568 €</td>
+                    <td>304,307 € - 466,828 €</td>
+                    <td style="text-align: center;">5,355</td>
+                </tr>
+
+                <tr class="">
+                    <td>Paris 11e</td>
+                    <td style="text-align: center;">2</td>
+                    <td class="price">392,866 €</td>
+                    <td>357,935 € - 427,796 €</td>
+                    <td style="text-align: center;">11,387</td>
+                </tr>
+
+                <tr class="">
+                    <td>Neuilly-sur-Seine</td>
+                    <td style="text-align: center;">3</td>
+                    <td class="price">408,645 €</td>
+                    <td>328,257 € - 453,967 €</td>
+                    <td style="text-align: center;">9,358</td>
+                </tr>
+
+                <tr class="">
+                    <td>Asnières-sur-Seine</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">410,630 €</td>
+                    <td>410,630 € - 410,630 €</td>
+                    <td style="text-align: center;">7,204</td>
+                </tr>
+
+                <tr class="">
+                    <td>Paris 13e</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">420,960 €</td>
+                    <td>420,960 € - 420,960 €</td>
+                    <td style="text-align: center;">10,267</td>
+                </tr>
+
+                <tr class="">
+                    <td>Fontenay-aux-Roses</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">442,103 €</td>
+                    <td>442,103 € - 442,103 €</td>
+                    <td style="text-align: center;">5,458</td>
+                </tr>
+
+                <tr class="">
+                    <td>Nanterre</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">447,194 €</td>
+                    <td>447,194 € - 447,194 €</td>
+                    <td style="text-align: center;">5,454</td>
+                </tr>
+
+                <tr class="">
+                    <td>Bry-sur-Marne</td>
+                    <td style="text-align: center;">1</td>
+                    <td class="price">468,043 €</td>
+                    <td>468,043 € - 468,043 €</td>
+                    <td style="text-align: center;">5,708</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>Rapport généré le 28/02/2026 à 06:40:42</p>
+            <p>Données basées sur l'analyse de 61 annonces immobilières en Île-de-France</p>
+            <p><strong>Budget Maximum:</strong> 130,000 EUR | <strong>DPE Max:</strong> D</p>
+        </div>
+    </div>
+</body>
+</html>
