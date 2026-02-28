@@ -1,0 +1,154 @@
+════════════════════════════════════════════════════════════════════════════════
+                    🎨 LAYOUTS VISUELS - 12 GRAPHIQUES
+════════════════════════════════════════════════════════════════════════════════
+
+LAYOUT 1: CONFIGURATION COMPLÈTE (Recommandée)
+─────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            📊 TABLEAU DE BORD IMMOBILIER                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌─────────────────────────┐    │
+│  │   41    │  │  285,6k€ │  │    6     │  │      ⓘ (79%)  GAUGE     │    │
+│  │Communes │  │   Prix   │  │ Accessi- │  │     Poissy Budget       │    │
+│  │Analysées│  │  Moyen   │  │  bles    │  │                         │    │
+│  └─────────┘  └──────────┘  └──────────┘  └─────────────────────────┘    │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌───────────────────────────┐  SLICER: Commune ▼                          │
+│  │ Poissy, Paris, Lagny...   │  [  ▼ Dropdown/Filter  ]                   │
+│  └───────────────────────────┘                                              │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌───────────────────────────┐  ┌────────────────────────────┐            │
+│  │   📊 BAR CHART            │  │  🔵 SCATTER PLOT           │            │
+│  │  Prix par Commune         │  │  Prix M² vs Total          │            │
+│  │                           │  │                            │            │
+│  │  300k│    ▁▁▁▁▁          │  │  400k  ○                   │            │
+│  │  200k│  ▁│ │ │▁▁          │  │  300k    ○ ○  ○            │            │
+│  │  100k│▁│ │ │ │ │        │  │  200k  ○   ○  ○  ○        │            │
+│  │     0├──────────────────│  │  100k  ○              ○     │            │
+│  │      │ P L S M C R     │  │    0├──────────────────│   │
+│  │      (Communes)        │  │      │ 2  3  4  5  6 (€/m²) │            │
+│  └───────────────────────────┘  └────────────────────────────┘            │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐  │
+│  │ 📋 TABLE: Détails Complets                                          │  │
+│  ├──────────────┬────────┬──────────┬──────────┬───────────┤            │  │
+│  │ Commune      │ Moy€   │ Min€     │ Max€     │ €/m²      │            │  │
+│  ├──────────────┼────────┼──────────┼──────────┼───────────┤            │  │
+│  │ Poissy       │103,651 │ 95,000   │115,000   │ 2,850     │            │  │
+│  │ Lagny-Marne  │110,240 │100,000   │125,000   │ 2,982     │            │  │
+│  │ Sartrouville │118,500 │108,000   │128,000   │ 3,100     │            │  │
+│  │ ...          │  ...   │   ...    │  ...     │   ...     │            │  │
+│  │ [41 lignes]  │        │          │          │           │            │  │
+│  └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌──────────────────────┐  ┌──────────────────┐  ┌────────────────┐       │
+│  │ 📈 LINE CHART        │  │ 🍩 DONUT CHART   │  │ 🔥 MATRIX      │       │
+│  │ Progression Prix     │  │ Distribution     │  │ Comparaison    │       │
+│  │        300k          │  │                  │  │                │       │
+│  │        200k ╱─╱──    │  │     Poissy 20%  │  │  C  Moy  Min   │       │
+│  │        100k ╱        │  │    ╱────╲ 15%  │  │ ──────────────│       │
+│  │          0╱          │  │  Lagny  │Autres│  │ P  103k  95k   │       │
+│  │            ────────  │  │ 18%  ╲──╱ 47% │  │ L  110k  100k  │       │
+│  │        Communes →    │  │                  │  │ S  118k  108k  │       │
+│  └──────────────────────┘  └──────────────────┘  └────────────────┘       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+LAYOUT 2: VERSION COMPACTE (Pour petit écran)
+─────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────┐
+│ KPI │ KPI │ KPI │ GAUGE                                     │
+│ 41  │285k │  6  │ (79%)                                     │
+├─────────────────────────────────────────────────────────────┤
+│             SLICER: Commune ▼                                 │
+├─────────────────────────────────────────────────────────────┤
+│  BAR             SCATTER          LINE         DONUT         │
+│  Chart           Plot             Chart        Chart         │
+├─────────────────────────────────────────────────────────────┤
+│              TABLE (41 communes)                             │
+├─────────────────────────────────────────────────────────────┤
+│           MATRIX (Heatmap)                                   │
+└─────────────────────────────────────────────────────────────┘
+
+
+ÉTAPES D'AJOUT (Dans l'ordre)
+─────────────────────────────────────────────────────────────────────────────
+
+1️⃣  Importer CSV
+    ↓
+2️⃣  Ajouter KPI 1 (41 communes)
+    ↓
+3️⃣  Ajouter KPI 2 (285k€)
+    ↓
+4️⃣  Ajouter KPI 3 (6 accessibles)
+    ↓
+5️⃣  Ajouter GAUGE (budget %)
+    ↓
+6️⃣  Ajouter SLICER (filtre commune)
+    ↓
+7️⃣  Ajouter BAR CHART (prix/commune)
+    ↓
+8️⃣  Ajouter SCATTER PLOT (M² vs total)
+    ↓
+9️⃣  Ajouter TABLE (détails)
+    ↓
+🔟 Ajouter LINE CHART (progression)
+    ↓
+1️⃣1️⃣ Ajouter DONUT CHART (distribution)
+    ↓
+1️⃣2️⃣ Ajouter MATRIX (comparaison)
+    ↓
+✅ RAPPORT COMPLET!
+
+
+RACCOURCIS POWER BI
+─────────────────────────────────────────────────────────────────────────────
+
+Home                    → Onglet principal
+New Visual              → Ajouter un graphique
+Get Data → CSV          → Importer données
+Format                  → Personnaliser couleurs
+Format Painter          → Copier format
+Ctrl+S                  → Sauvegarder
+Ctrl+Z                  → Annuler
+Ctrl+A                  → Sélectionner tout
+
+
+POINTS CLÉS À VÉRIFIER
+─────────────────────────────────────────────────────────────────────────────
+
+✅ Les données CSV sont chargées (41 communes)
+✅ Tous les graphiques utilisent la même source de données
+✅ Le Slicer est connecté aux autres visuels
+✅ Les formats de devise et nombre sont corrects
+✅ Les titres sont explicites et en français
+✅ Les couleurs sont cohérentes
+✅ L'espacement est équilibré
+
+
+INTERACTION FINALE
+─────────────────────────────────────────────────────────────────────────────
+
+Après 12 graphiques → Rapport ENTIÈREMENT INTERACTIF:
+
+    Cliquez un point → BAR CHART change
+                   → SCATTER PLOT change
+                   → TABLE filtre
+                   → KPI se met à jour
+                   → GAUGE se met à jour
+                   → Tous les graphiques en SYNC!
+
+
+════════════════════════════════════════════════════════════════════════════════
