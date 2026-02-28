@@ -7,12 +7,13 @@ from pathlib import Path
 # Répertoire de base
 BASE_DIR = Path(__file__).parent
 
-# Configuration des critères de recherche
+# Configuration des critères de recherche (valeurs par défaut, écrasées par user_config.json)
 SEARCH_CONFIG = {
-    'budget_min': 200000,
-    'budget_max': 500000,
+    'budget_min': 50000,
+    'budget_max': 150000,
     'dpe_max': 'D',  # Maximum D
-    'zones': ['Paris', 'Hauts-de-Seine', 'Val-de-Marne'],
+    'surface_min': 30,
+    'zones': ['Paris', 'Hauts-de-Seine', 'Val-de-Marne', 'Essonne', 'Seine-et-Marne', 'Yvelines'],
     'zones_codes': {
         'Paris': '75',
         'Hauts-de-Seine': '92',

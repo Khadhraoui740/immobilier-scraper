@@ -323,16 +323,28 @@ class Database:
         finally:
             conn.close()
     
-    def get_new_properties(self, hours=2):
+    def get_new_properties(self, hours=2, filters=None):
         """Récupérer les annonces récentes"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
-        cursor.execute('''
-            SELECT * FROM properties
-            WHERE created_at >= datetime('now', '-' || ? || ' hours')
-            ORDER BY created_at DESC
-        ''', (hours,))
+        query = "SELECT * FROM properties WHERE created_at >= datetime('now', '-' || ? || ' hours')"
+        params = [hours]
+        
+        if filters:
+            if filters.get('price_min'):
+                query += ' AND price >= ?'
+                params.append(filters['price_min'])
+            if filters.get('price_max'):
+                query += ' AND price <= ?'
+                params.append(filters['price_max'])
+            if filters.get('dpe_max'):
+                dpe_value = DPE_MAPPING[filters['dpe_max']]
+                query += ' AND dpe_value <= ?'
+                params.append(dpe_value)
+        
+        query += ' ORDER BY created_at DESC'
+        cursor.execute(query, params)
         
         return cursor.fetchall()
     
@@ -344,31 +356,51 @@ class Database:
         cursor.execute('SELECT id FROM properties WHERE url = ?', (url,))
         return cursor.fetchone() is not None
     
-    def get_statistics(self):
+    def get_statistics(self, filters=None):
         """Récupérer les statistiques de la base de données"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
         stats = {}
         
+        # Construire la clause WHERE pour les filtres
+        where_clause = ''
+        params = []
+        
+        if filters:
+            where_conditions = []
+            if filters.get('price_min'):
+                where_conditions.append('price >= ?')
+                params.append(filters['price_min'])
+            if filters.get('price_max'):
+                where_conditions.append('price <= ?')
+                params.append(filters['price_max'])
+            if filters.get('dpe_max'):
+                dpe_value = DPE_MAPPING[filters['dpe_max']]
+                where_conditions.append('dpe_value <= ?')
+                params.append(dpe_value)
+            
+            if where_conditions:
+                where_clause = ' WHERE ' + ' AND '.join(where_conditions)
+        
         # Total des annonces
-        cursor.execute('SELECT COUNT(*) FROM properties')
+        cursor.execute(f'SELECT COUNT(*) FROM properties{where_clause}', params)
         stats['total_properties'] = cursor.fetchone()[0]
         
         # Par source
-        cursor.execute('SELECT source, COUNT(*) FROM properties GROUP BY source')
+        cursor.execute(f'SELECT source, COUNT(*) FROM properties{where_clause} GROUP BY source', params)
         stats['by_source'] = {row[0]: row[1] for row in cursor.fetchall()}
         
         # Par statut
-        cursor.execute('SELECT status, COUNT(*) FROM properties GROUP BY status')
+        cursor.execute(f'SELECT status, COUNT(*) FROM properties{where_clause} GROUP BY status', params)
         stats['by_status'] = {row[0]: row[1] for row in cursor.fetchall()}
         
         # Moyenne des prix
-        cursor.execute('SELECT AVG(price) FROM properties')
+        cursor.execute(f'SELECT AVG(price) FROM properties{where_clause}', params)
         stats['avg_price'] = cursor.fetchone()[0]
         
         # Prix min/max
-        cursor.execute('SELECT MIN(price), MAX(price) FROM properties')
+        cursor.execute(f'SELECT MIN(price), MAX(price) FROM properties{where_clause}', params)
         min_price, max_price = cursor.fetchone()
         stats['min_price'] = min_price
         stats['max_price'] = max_price

@@ -77,9 +77,16 @@ def health():
 def dashboard():
     """Page d'accueil - Dashboard"""
     try:
-        stats = db.get_statistics() or {}
+        # Appliquer les mêmes filtres que la page /properties
+        filters = {
+            'price_min': SEARCH_CONFIG.get('budget_min', 0),
+            'price_max': SEARCH_CONFIG.get('budget_max', 9999999),
+            'dpe_max': SEARCH_CONFIG.get('dpe_max', 'G')
+        }
+        
+        stats = db.get_statistics(filters=filters) or {}
         summary = analyzer.get_summary_stats(24) or {}
-        properties = db.get_new_properties(hours=24) or []
+        properties = db.get_new_properties(hours=24, filters=filters) or []
         
         # Valeurs par défaut si aucune propriété
         avg_price = stats.get('avg_price') or 0
@@ -196,7 +203,13 @@ def dashboard_redirect():
 def api_properties():
     """Retourner les propriétés en JSON (compatibilité API)"""
     try:
-        props = db.get_properties()
+        # Appliquer les mêmes filtres que toutes les autres pages
+        filters = {
+            'price_min': SEARCH_CONFIG.get('budget_min', 0),
+            'price_max': SEARCH_CONFIG.get('budget_max', 9999999),
+            'dpe_max': SEARCH_CONFIG.get('dpe_max', 'G')
+        }
+        props = db.get_properties(filters=filters)
         props_list = [dict(p) for p in props]
         return jsonify({'success': True, 'properties': props_list, 'count': len(props_list)})
     except Exception as e:
@@ -560,8 +573,15 @@ def api_scheduler_stop():
 def api_stats():
     """Statistiques"""
     try:
-        stats = db.get_statistics()
-        summary = analyzer.get_summary_stats(24)
+        # Appliquer les mêmes filtres que le dashboard
+        filters = {
+            'price_min': SEARCH_CONFIG.get('budget_min', 0),
+            'price_max': SEARCH_CONFIG.get('budget_max', 9999999),
+            'dpe_max': SEARCH_CONFIG.get('dpe_max', 'G')
+        }
+        
+        stats = db.get_statistics(filters=filters)
+        new_properties = db.get_new_properties(hours=24, filters=filters)
         
         return jsonify({
             'total': stats.get('total_properties', 0),
@@ -570,7 +590,7 @@ def api_stats():
             'max_price': stats.get('max_price', 0),
             'by_source': stats.get('by_source', {}),
             'by_status': stats.get('by_status', {}),
-            'new_24h': summary.get('count', 0)
+            'new_24h': len(new_properties)
         })
     except Exception as e:
         logger.error(f"Erreur stats: {e}")
