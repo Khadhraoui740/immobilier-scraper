@@ -1,0 +1,47 @@
+-- Mesures DAX pour Power BI Desktop
+-- Générées automatiquement le 28/02/2026 08:36
+
+-- Mesure 1: Total Annonces
+Total Annonces = COUNTROWS(Proprietes)
+-- Format: #,##0
+
+-- Mesure 2: Prix Moyen
+Prix Moyen = AVERAGE(Proprietes[Prix])
+-- Format: #,##0 €
+
+-- Mesure 3: Prix Minimum
+Prix Minimum = MIN(Proprietes[Prix])
+-- Format: #,##0 €
+
+-- Mesure 4: Prix Maximum
+Prix Maximum = MAX(Proprietes[Prix])
+-- Format: #,##0 €
+
+-- Mesure 5: Surface Moyenne
+Surface Moyenne = AVERAGE(Proprietes[Surface])
+-- Format: #,##0.0 m²
+
+-- Mesure 6: Prix/m² Moyen
+Prix/m² Moyen = DIVIDE([Prix Moyen], [Surface Moyenne], 0)
+-- Format: #,##0 €/m²
+
+-- Mesure 7: Communes Accessibles
+Communes Accessibles = CALCULATE(DISTINCTCOUNT(Communes[Commune]), Communes[BudgetFit] = 1)
+-- Format: #,##0
+
+-- Mesure 8: % Budget Accessible
+% Budget Accessible = DIVIDE([Communes Accessibles], DISTINCTCOUNT(Communes[Commune]), 0)
+-- Format: 0.0%
+
+-- Mesure 9: Rentabilité
+-- Estimation loyer 1000€/mois
+Rentabilité = DIVIDE(1000 * 12, [Prix/m² Moyen], 0) * 100
+-- Format: 0.00%
+
+-- Mesure 10: Budget Restant
+Budget Restant = 130000 - [Prix Moyen]
+-- Format: #,##0 €
+
+
+-- RELATIONS À CRÉER :
+-- Proprietes[Commune] → Communes[Commune]  (Cardinalité: Many-One)

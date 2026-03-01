@@ -1,0 +1,99 @@
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SCRIPT POWER QUERY M - OPTIMISATION DES DONNÉES
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ───────────────────────────────────────────────────────────────────────────
+// TABLE : Proprietes (Source : proprietes_immobilier.csv)
+// ───────────────────────────────────────────────────────────────────────────
+
+let
+    Source = Csv.Document(File.Contents("proprietes_immobilier.csv"),
+        [Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    
+    // Promouvoir les en-têtes
+    PromoteHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    
+    // Changer les types
+    ChangeTypes = Table.TransformColumnTypes(PromoteHeaders,{
+        {"ID", type text},
+        {"Source", type text},
+        {"Commune", type text},
+        {"Prix", Currency.Type},
+        {"Surface", type number},
+        {"Pieces", Int64.Type},
+        {"DPE", type text},
+        {"Date Publie", type datetime},
+        {"URL", type text}
+    }),
+    
+    // Ajouter des colonnes calculées
+    AddPrixM2 = Table.AddColumn(ChangeTypes, "Prix/m²", 
+        each [Prix] / [Surface], Currency.Type),
+    
+    AddMoisPubli = Table.AddColumn(AddPrixM2, "Mois Publication",
+        each Date.MonthName([Date Publie]), type text),
+    
+    // Filtrer les valeurs nulles
+    FilterNull = Table.SelectRows(AddMoisPubli, 
+        each [Prix] <> null and [Surface] <> null),
+    
+    // Trier par date descendant
+    SortByDate = Table.Sort(FilterNull,{{"Date Publie", Order.Descending}})
+in
+    SortByDate
+
+
+// ───────────────────────────────────────────────────────────────────────────
+// TABLE : Communes (Source : synthese_communes.csv)
+// ───────────────────────────────────────────────────────────────────────────
+
+let
+    Source = Csv.Document(File.Contents("synthese_communes.csv"),
+        [Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    
+    // Promouvoir les en-têtes
+    PromoteHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    
+    // Changer les types
+    ChangeTypes = Table.TransformColumnTypes(PromoteHeaders,{
+        {"Rang", Int64.Type},
+        {"Commune", type text},
+        {"Count", Int64.Type},
+        {"AvgPrice", Currency.Type},
+        {"MinPrice", Currency.Type},
+        {"MaxPrice", Currency.Type},
+        {"AvgSurface", type number},
+        {"PricePerm2", type number},
+        {"BudgetFit", Int64.Type}
+    }),
+    
+    // Ajouter colonne Accessible
+    AddAccessible = Table.AddColumn(ChangeTypes, "Accessible", 
+        each if [BudgetFit] = 1 then "Oui" else "Non", type text),
+    
+    // Ajouter catégorie de prix
+    AddCategorie = Table.AddColumn(AddAccessible, "Catégorie Prix",
+        each if [AvgPrice] <= 130000 then "Accessible"
+             else if [AvgPrice] <= 200000 then "Moyen"
+             else "Élevé", type text),
+    
+    // Trier par prix moyen
+    SortByPrice = Table.Sort(AddCategorie,{{"AvgPrice", Order.Ascending}})
+in
+    SortByPrice
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INSTRUCTIONS D'APPLICATION :
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// 1. Dans Power BI Desktop, aller dans "Transformer les données"
+// 2. Pour chaque table (Proprietes, Communes) :
+//    • Clic droit sur la requête → Éditeur avancé
+//    • Remplacer tout le code par le script correspondant ci-dessus
+//    • Modifier le chemin du fichier CSV (ligne "File.Contents")
+//    • Cliquer "Terminé"
+// 3. Cliquer "Fermer et appliquer"
+//
+// ═══════════════════════════════════════════════════════════════════════════

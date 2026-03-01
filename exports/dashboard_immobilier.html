@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Immobilier Île-de-France - Power BI Style</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .kpi-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .kpi-label {
+            font-size: 1em;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        canvas {
+            max-height: 350px;
+        }
+        
+        .table-container {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .badge-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .filter-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+        }
+        
+        select {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Dashboard Immobilier Île-de-France</h1>
+            <p>Analyse complète - Budget 130 000€ - 41 communes</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Généré le 28/02/2026 à 07:49</p>
+        </div>
+        
+        <!-- KPI Cards -->
+        <div class="kpi-container">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Communes</div>
+                <div class="kpi-value">41</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Prix Moyen</div>
+                <div class="kpi-value">283,486€</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Accessibles ≤130k</div>
+                <div class="kpi-value">6</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Meilleure Option</div>
+                <div class="kpi-value" style="font-size: 1.5em;">Poissy</div>
+                <div style="font-size: 0.9em; margin-top: 5px;">103,651€</div>
+            </div>
+        </div>
+        
+        <!-- Filtre -->
+        <div class="filter-section">
+            <label for="communeFilter" style="font-weight: 600; margin-right: 15px;">🔍 Filtrer par commune:</label>
+            <select id="communeFilter" onchange="filterData()">
+                <option value="">Toutes les communes</option>
+                <option value="Poissy">Poissy</option>
+<option value="Lagny-sur-Marne">Lagny-sur-Marne</option>
+<option value="Sartrouville">Sartrouville</option>
+<option value="Massy">Massy</option>
+<option value="Chelles">Chelles</option>
+<option value="Rambouillet">Rambouillet</option>
+<option value="Étampes">Étampes</option>
+<option value="Évry-Courcouronnes">Évry-Courcouronnes</option>
+<option value="Villeparisis">Villeparisis</option>
+<option value="Cachan">Cachan</option>
+<option value="Vincennes">Vincennes</option>
+<option value="Champigny-sur-Marne">Champigny-sur-Marne</option>
+<option value="Le Kremlin-Bicêtre">Le Kremlin-Bicêtre</option>
+<option value="Créteil">Créteil</option>
+<option value="Meudon">Meudon</option>
+<option value="Saint-Maurice">Saint-Maurice</option>
+<option value="Villejuif">Villejuif</option>
+<option value="Suresnes">Suresnes</option>
+<option value="Nogent-sur-Marne">Nogent-sur-Marne</option>
+<option value="Rueil-Malmaison">Rueil-Malmaison</option>
+<option value="Châtenay-Malabry">Châtenay-Malabry</option>
+<option value="Vitry-sur-Seine">Vitry-sur-Seine</option>
+<option value="Ivry-sur-Seine">Ivry-sur-Seine</option>
+<option value="Choisy-le-Roi">Choisy-le-Roi</option>
+<option value="Paris 19e">Paris 19e</option>
+<option value="Paris 10e">Paris 10e</option>
+<option value="Thiais">Thiais</option>
+<option value="Issy-les-Moulineaux">Issy-les-Moulineaux</option>
+<option value="Paris 18e">Paris 18e</option>
+<option value="Joinville-le-Pont">Joinville-le-Pont</option>
+<option value="Garches">Garches</option>
+<option value="Clamart">Clamart</option>
+<option value="Paris 12e">Paris 12e</option>
+<option value="Fontenay-sous-Bois">Fontenay-sous-Bois</option>
+<option value="Paris 11e">Paris 11e</option>
+<option value="Neuilly-sur-Seine">Neuilly-sur-Seine</option>
+<option value="Asnières-sur-Seine">Asnières-sur-Seine</option>
+<option value="Paris 13e">Paris 13e</option>
+<option value="Fontenay-aux-Roses">Fontenay-aux-Roses</option>
+<option value="Nanterre">Nanterre</option>
+<option value="Bry-sur-Marne">Bry-sur-Marne</option>
+            </select>
+        </div>
+        
+        <!-- Graphiques -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">📊 Prix Moyen par Commune</div>
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🎯 Prix au M² vs Prix Total</div>
+                <canvas id="scatterChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">📈 Évolution des Prix</div>
+                <canvas id="lineChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🍩 Distribution Budget</div>
+                <canvas id="donutChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">📉 Variation Min-Max</div>
+                <canvas id="rangeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🏆 Top 10 Communes</div>
+                <canvas id="topChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Tableau -->
+        <div class="table-container">
+            <div class="chart-title" style="margin-bottom: 20px;">📋 Tableau Détaillé des Communes</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Commune</th>
+                        <th>Prix Moyen</th>
+                        <th>Prix Min</th>
+                        <th>Prix Max</th>
+                        <th>Prix/M²</th>
+                        <th>Propriétés</th>
+                        <th>Accessibilité</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td><strong>Poissy</strong></td>
+                        <td>103,651€</td>
+                        <td>102,181€</td>
+                        <td>105,121€</td>
+                        <td>3,189€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-success'>✓ Accessible</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Lagny-sur-Marne</strong></td>
+                        <td>113,326€</td>
+                        <td>109,993€</td>
+                        <td>116,658€</td>
+                        <td>2,982€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-success'>✓ Accessible</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Sartrouville</strong></td>
+                        <td>113,416€</td>
+                        <td>113,416€</td>
+                        <td>113,416€</td>
+                        <td>3,781€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-success'>✓ Accessible</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Massy</strong></td>
+                        <td>113,925€</td>
+                        <td>113,925€</td>
+                        <td>113,925€</td>
+                        <td>3,452€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-success'>✓ Accessible</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Chelles</strong></td>
+                        <td>116,286€</td>
+                        <td>116,286€</td>
+                        <td>116,286€</td>
+                        <td>3,876€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-success'>✓ Accessible</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Rambouillet</strong></td>
+                        <td>126,992€</td>
+                        <td>126,992€</td>
+                        <td>126,992€</td>
+                        <td>3,024€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-success'>✓ Accessible</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Étampes</strong></td>
+                        <td>135,260€</td>
+                        <td>135,260€</td>
+                        <td>135,260€</td>
+                        <td>2,459€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-warning'>Budget serré</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Évry-Courcouronnes</strong></td>
+                        <td>137,812€</td>
+                        <td>132,079€</td>
+                        <td>143,546€</td>
+                        <td>3,534€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-warning'>Budget serré</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Villeparisis</strong></td>
+                        <td>145,414€</td>
+                        <td>145,414€</td>
+                        <td>145,414€</td>
+                        <td>2,744€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-warning'>Budget serré</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Cachan</strong></td>
+                        <td>173,728€</td>
+                        <td>173,728€</td>
+                        <td>173,728€</td>
+                        <td>4,826€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Vincennes</strong></td>
+                        <td>196,216€</td>
+                        <td>196,216€</td>
+                        <td>196,216€</td>
+                        <td>5,771€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Champigny-sur-Marne</strong></td>
+                        <td>204,896€</td>
+                        <td>157,451€</td>
+                        <td>252,342€</td>
+                        <td>4,182€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Le Kremlin-Bicêtre</strong></td>
+                        <td>216,059€</td>
+                        <td>216,059€</td>
+                        <td>216,059€</td>
+                        <td>4,501€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Créteil</strong></td>
+                        <td>250,507€</td>
+                        <td>180,235€</td>
+                        <td>305,277€</td>
+                        <td>4,421€</td>
+                        <td>3</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Meudon</strong></td>
+                        <td>254,355€</td>
+                        <td>254,355€</td>
+                        <td>254,355€</td>
+                        <td>5,652€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Saint-Maurice</strong></td>
+                        <td>259,437€</td>
+                        <td>259,437€</td>
+                        <td>259,437€</td>
+                        <td>5,295€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Villejuif</strong></td>
+                        <td>264,828€</td>
+                        <td>141,410€</td>
+                        <td>403,827€</td>
+                        <td>4,432€</td>
+                        <td>4</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Suresnes</strong></td>
+                        <td>283,211€</td>
+                        <td>283,211€</td>
+                        <td>283,211€</td>
+                        <td>6,157€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Nogent-sur-Marne</strong></td>
+                        <td>291,584€</td>
+                        <td>291,584€</td>
+                        <td>291,584€</td>
+                        <td>6,204€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Rueil-Malmaison</strong></td>
+                        <td>297,040€</td>
+                        <td>286,472€</td>
+                        <td>307,608€</td>
+                        <td>7,616€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Châtenay-Malabry</strong></td>
+                        <td>301,514€</td>
+                        <td>301,514€</td>
+                        <td>301,514€</td>
+                        <td>6,555€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Vitry-sur-Seine</strong></td>
+                        <td>306,804€</td>
+                        <td>255,542€</td>
+                        <td>358,065€</td>
+                        <td>3,859€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Ivry-sur-Seine</strong></td>
+                        <td>320,013€</td>
+                        <td>320,013€</td>
+                        <td>320,013€</td>
+                        <td>4,324€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Choisy-le-Roi</strong></td>
+                        <td>332,226€</td>
+                        <td>332,226€</td>
+                        <td>332,226€</td>
+                        <td>3,257€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Paris 19e</strong></td>
+                        <td>337,667€</td>
+                        <td>337,667€</td>
+                        <td>337,667€</td>
+                        <td>8,236€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Paris 10e</strong></td>
+                        <td>338,416€</td>
+                        <td>338,416€</td>
+                        <td>338,416€</td>
+                        <td>9,146€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Thiais</strong></td>
+                        <td>341,835€</td>
+                        <td>272,591€</td>
+                        <td>454,183€</td>
+                        <td>4,210€</td>
+                        <td>5</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Issy-les-Moulineaux</strong></td>
+                        <td>346,911€</td>
+                        <td>346,911€</td>
+                        <td>346,911€</td>
+                        <td>6,424€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Paris 18e</strong></td>
+                        <td>352,635€</td>
+                        <td>352,635€</td>
+                        <td>352,635€</td>
+                        <td>9,531€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Joinville-le-Pont</strong></td>
+                        <td>356,604€</td>
+                        <td>356,604€</td>
+                        <td>356,604€</td>
+                        <td>4,296€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Garches</strong></td>
+                        <td>359,600€</td>
+                        <td>359,600€</td>
+                        <td>359,600€</td>
+                        <td>5,993€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Clamart</strong></td>
+                        <td>375,153€</td>
+                        <td>375,153€</td>
+                        <td>375,153€</td>
+                        <td>6,150€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Paris 12e</strong></td>
+                        <td>379,598€</td>
+                        <td>268,705€</td>
+                        <td>490,491€</td>
+                        <td>9,038€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Fontenay-sous-Bois</strong></td>
+                        <td>385,568€</td>
+                        <td>304,307€</td>
+                        <td>466,828€</td>
+                        <td>5,355€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Paris 11e</strong></td>
+                        <td>392,866€</td>
+                        <td>357,935€</td>
+                        <td>427,796€</td>
+                        <td>11,387€</td>
+                        <td>2</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Neuilly-sur-Seine</strong></td>
+                        <td>408,645€</td>
+                        <td>328,257€</td>
+                        <td>453,967€</td>
+                        <td>9,358€</td>
+                        <td>3</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Asnières-sur-Seine</strong></td>
+                        <td>410,630€</td>
+                        <td>410,630€</td>
+                        <td>410,630€</td>
+                        <td>7,204€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Paris 13e</strong></td>
+                        <td>420,960€</td>
+                        <td>420,960€</td>
+                        <td>420,960€</td>
+                        <td>10,267€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Fontenay-aux-Roses</strong></td>
+                        <td>442,103€</td>
+                        <td>442,103€</td>
+                        <td>442,103€</td>
+                        <td>5,458€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Nanterre</strong></td>
+                        <td>447,194€</td>
+                        <td>447,194€</td>
+                        <td>447,194€</td>
+                        <td>5,454€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+<tr>
+                        <td><strong>Bry-sur-Marne</strong></td>
+                        <td>468,043€</td>
+                        <td>468,043€</td>
+                        <td>468,043€</td>
+                        <td>5,708€</td>
+                        <td>1</td>
+                        <td>
+                            <span class='badge badge-danger'>✗ Trop cher</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>📍 Données extraites de la base immobilier.db</p>
+            <p>🚀 Dashboard généré automatiquement par Immobilier Scraper</p>
+        </div>
+    </div>
+    
+    <script>
+        const data = [{"commune": "Poissy", "prix_moyen": 103651.0, "prix_min": 102181.0, "prix_max": 105121.0, "prix_m2": 3189.2615384615383, "nb_proprietes": 2}, {"commune": "Lagny-sur-Marne", "prix_moyen": 113325.5, "prix_min": 109993.0, "prix_max": 116658.0, "prix_m2": 2982.25, "nb_proprietes": 2}, {"commune": "Sartrouville", "prix_moyen": 113416.0, "prix_min": 113416.0, "prix_max": 113416.0, "prix_m2": 3780.5333333333333, "nb_proprietes": 1}, {"commune": "Massy", "prix_moyen": 113925.0, "prix_min": 113925.0, "prix_max": 113925.0, "prix_m2": 3452.2727272727275, "nb_proprietes": 1}, {"commune": "Chelles", "prix_moyen": 116286.0, "prix_min": 116286.0, "prix_max": 116286.0, "prix_m2": 3876.2, "nb_proprietes": 1}, {"commune": "Rambouillet", "prix_moyen": 126992.0, "prix_min": 126992.0, "prix_max": 126992.0, "prix_m2": 3023.6190476190477, "nb_proprietes": 1}, {"commune": "Étampes", "prix_moyen": 135260.0, "prix_min": 135260.0, "prix_max": 135260.0, "prix_m2": 2459.2727272727275, "nb_proprietes": 1}, {"commune": "Évry-Courcouronnes", "prix_moyen": 137812.5, "prix_min": 132079.0, "prix_max": 143546.0, "prix_m2": 3533.653846153846, "nb_proprietes": 2}, {"commune": "Villeparisis", "prix_moyen": 145414.0, "prix_min": 145414.0, "prix_max": 145414.0, "prix_m2": 2743.6603773584907, "nb_proprietes": 1}, {"commune": "Cachan", "prix_moyen": 173728.0, "prix_min": 173728.0, "prix_max": 173728.0, "prix_m2": 4825.777777777777, "nb_proprietes": 1}, {"commune": "Vincennes", "prix_moyen": 196216.0, "prix_min": 196216.0, "prix_max": 196216.0, "prix_m2": 5771.058823529412, "nb_proprietes": 1}, {"commune": "Champigny-sur-Marne", "prix_moyen": 204896.5, "prix_min": 157451.0, "prix_max": 252342.0, "prix_m2": 4181.561224489796, "nb_proprietes": 2}, {"commune": "Le Kremlin-Bicêtre", "prix_moyen": 216059.0, "prix_min": 216059.0, "prix_max": 216059.0, "prix_m2": 4501.229166666667, "nb_proprietes": 1}, {"commune": "Créteil", "prix_moyen": 250507.33333333334, "prix_min": 180235.0, "prix_max": 305277.0, "prix_m2": 4420.717647058824, "nb_proprietes": 3}, {"commune": "Meudon", "prix_moyen": 254355.0, "prix_min": 254355.0, "prix_max": 254355.0, "prix_m2": 5652.333333333333, "nb_proprietes": 1}, {"commune": "Saint-Maurice", "prix_moyen": 259437.0, "prix_min": 259437.0, "prix_max": 259437.0, "prix_m2": 5294.632653061224, "nb_proprietes": 1}, {"commune": "Villejuif", "prix_moyen": 264828.25, "prix_min": 141410.0, "prix_max": 403827.0, "prix_m2": 4432.271966527197, "nb_proprietes": 4}, {"commune": "Suresnes", "prix_moyen": 283211.0, "prix_min": 283211.0, "prix_max": 283211.0, "prix_m2": 6156.760869565217, "nb_proprietes": 1}, {"commune": "Nogent-sur-Marne", "prix_moyen": 291584.0, "prix_min": 291584.0, "prix_max": 291584.0, "prix_m2": 6203.914893617021, "nb_proprietes": 1}, {"commune": "Rueil-Malmaison", "prix_moyen": 297040.0, "prix_min": 286472.0, "prix_max": 307608.0, "prix_m2": 7616.410256410257, "nb_proprietes": 2}, {"commune": "Châtenay-Malabry", "prix_moyen": 301514.0, "prix_min": 301514.0, "prix_max": 301514.0, "prix_m2": 6554.652173913043, "nb_proprietes": 1}, {"commune": "Vitry-sur-Seine", "prix_moyen": 306803.5, "prix_min": 255542.0, "prix_max": 358065.0, "prix_m2": 3859.1635220125786, "nb_proprietes": 2}, {"commune": "Ivry-sur-Seine", "prix_moyen": 320013.0, "prix_min": 320013.0, "prix_max": 320013.0, "prix_m2": 4324.5, "nb_proprietes": 1}, {"commune": "Choisy-le-Roi", "prix_moyen": 332226.0, "prix_min": 332226.0, "prix_max": 332226.0, "prix_m2": 3257.1176470588234, "nb_proprietes": 1}, {"commune": "Paris 19e", "prix_moyen": 337667.0, "prix_min": 337667.0, "prix_max": 337667.0, "prix_m2": 8235.780487804877, "nb_proprietes": 1}, {"commune": "Paris 10e", "prix_moyen": 338416.0, "prix_min": 338416.0, "prix_max": 338416.0, "prix_m2": 9146.378378378378, "nb_proprietes": 1}, {"commune": "Thiais", "prix_moyen": 341835.0, "prix_min": 272591.0, "prix_max": 454183.0, "prix_m2": 4209.790640394089, "nb_proprietes": 5}, {"commune": "Issy-les-Moulineaux", "prix_moyen": 346911.0, "prix_min": 346911.0, "prix_max": 346911.0, "prix_m2": 6424.277777777777, "nb_proprietes": 1}, {"commune": "Paris 18e", "prix_moyen": 352635.0, "prix_min": 352635.0, "prix_max": 352635.0, "prix_m2": 9530.675675675675, "nb_proprietes": 1}, {"commune": "Joinville-le-Pont", "prix_moyen": 356604.0, "prix_min": 356604.0, "prix_max": 356604.0, "prix_m2": 4296.433734939759, "nb_proprietes": 1}, {"commune": "Garches", "prix_moyen": 359600.0, "prix_min": 359600.0, "prix_max": 359600.0, "prix_m2": 5993.333333333333, "nb_proprietes": 1}, {"commune": "Clamart", "prix_moyen": 375153.0, "prix_min": 375153.0, "prix_max": 375153.0, "prix_m2": 6150.049180327869, "nb_proprietes": 1}, {"commune": "Paris 12e", "prix_moyen": 379598.0, "prix_min": 268705.0, "prix_max": 490491.0, "prix_m2": 9038.047619047618, "nb_proprietes": 2}, {"commune": "Fontenay-sous-Bois", "prix_moyen": 385567.5, "prix_min": 304307.0, "prix_max": 466828.0, "prix_m2": 5355.104166666667, "nb_proprietes": 2}, {"commune": "Paris 11e", "prix_moyen": 392865.5, "prix_min": 357935.0, "prix_max": 427796.0, "prix_m2": 11387.40579710145, "nb_proprietes": 2}, {"commune": "Neuilly-sur-Seine", "prix_moyen": 408645.0, "prix_min": 328257.0, "prix_max": 453967.0, "prix_m2": 9358.282442748092, "nb_proprietes": 3}, {"commune": "Asnières-sur-Seine", "prix_moyen": 410630.0, "prix_min": 410630.0, "prix_max": 410630.0, "prix_m2": 7204.035087719299, "nb_proprietes": 1}, {"commune": "Paris 13e", "prix_moyen": 420960.0, "prix_min": 420960.0, "prix_max": 420960.0, "prix_m2": 10267.317073170732, "nb_proprietes": 1}, {"commune": "Fontenay-aux-Roses", "prix_moyen": 442103.0, "prix_min": 442103.0, "prix_max": 442103.0, "prix_m2": 5458.061728395061, "nb_proprietes": 1}, {"commune": "Nanterre", "prix_moyen": 447194.0, "prix_min": 447194.0, "prix_max": 447194.0, "prix_m2": 5453.585365853659, "nb_proprietes": 1}, {"commune": "Bry-sur-Marne", "prix_moyen": 468043.0, "prix_min": 468043.0, "prix_max": 468043.0, "prix_m2": 5707.841463414634, "nb_proprietes": 1}];
+        
+        // Configuration globale
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.font.size = 12;
+        
+        // Graphique 1: Barres - Prix moyen
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.commune),
+                datasets: [{
+                    label: 'Prix Moyen (€)',
+                    data: data.map(d => d.prix_moyen),
+                    backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                    borderColor: 'rgb(102, 126, 234)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.parsed.y.toLocaleString('fr-FR') + '€'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => value.toLocaleString('fr-FR') + '€'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Graphique 2: Scatter - Prix M² vs Prix Total
+        new Chart(document.getElementById('scatterChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Communes',
+                    data: data.map(d => ({x: d.prix_m2, y: d.prix_moyen, commune: d.commune})),
+                    backgroundColor: 'rgba(118, 75, 162, 0.6)',
+                    borderColor: 'rgb(118, 75, 162)',
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.raw.commune + ': ' + ctx.parsed.y.toLocaleString('fr-FR') + '€'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Prix au M² (€)' },
+                        ticks: { callback: v => v.toLocaleString('fr-FR') + '€' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Prix Moyen (€)' },
+                        ticks: { callback: v => v.toLocaleString('fr-FR') + '€' }
+                    }
+                }
+            }
+        });
+        
+        // Graphique 3: Line - Évolution
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.commune),
+                datasets: [{
+                    label: 'Prix Moyen',
+                    data: data.map(d => d.prix_moyen),
+                    borderColor: 'rgb(46, 204, 113)',
+                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        ticks: { callback: v => v.toLocaleString('fr-FR') + '€' }
+                    }
+                }
+            }
+        });
+        
+        // Graphique 4: Donut - Distribution
+        const accessible = data.filter(d => d.prix_moyen <= 130000).length;
+        const moyen = data.filter(d => d.prix_moyen > 130000 && d.prix_moyen <= 150000).length;
+        const cher = data.filter(d => d.prix_moyen > 150000).length;
+        
+        new Chart(document.getElementById('donutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Accessible (≤130k)', 'Moyen (130-150k)', 'Cher (>150k)'],
+                datasets: [{
+                    data: [accessible, moyen, cher],
+                    backgroundColor: [
+                        'rgba(46, 204, 113, 0.8)',
+                        'rgba(243, 156, 18, 0.8)',
+                        'rgba(231, 76, 60, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+        
+        // Graphique 5: Range Chart
+        new Chart(document.getElementById('rangeChart'), {
+            type: 'bar',
+            data: {
+                labels: data.slice(0, 15).map(d => d.commune),
+                datasets: [
+                    {
+                        label: 'Prix Min',
+                        data: data.slice(0, 15).map(d => d.prix_min),
+                        backgroundColor: 'rgba(52, 152, 219, 0.6)'
+                    },
+                    {
+                        label: 'Prix Max',
+                        data: data.slice(0, 15).map(d => d.prix_max),
+                        backgroundColor: 'rgba(155, 89, 182, 0.6)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: { callback: v => v.toLocaleString('fr-FR') + '€' }
+                    }
+                }
+            }
+        });
+        
+        // Graphique 6: Top 10
+        const top10 = data.slice(0, 10);
+        new Chart(document.getElementById('topChart'), {
+            type: 'horizontalBar',
+            data: {
+                labels: top10.map(d => d.commune),
+                datasets: [{
+                    label: 'Prix Moyen',
+                    data: top10.map(d => d.prix_moyen),
+                    backgroundColor: 'rgba(231, 76, 60, 0.7)'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        ticks: { callback: v => v.toLocaleString('fr-FR') + '€' }
+                    }
+                }
+            }
+        });
+        
+        // Fonction de filtrage
+        function filterData() {
+            const filter = document.getElementById('communeFilter').value;
+            const rows = document.querySelectorAll('#tableBody tr');
+            
+            rows.forEach(row => {
+                const commune = row.cells[0].textContent;
+                row.style.display = filter === '' || commune.includes(filter) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

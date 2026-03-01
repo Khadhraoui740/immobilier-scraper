@@ -1,0 +1,163 @@
+
+████████████████████████████████████████████████████████████████████████████████
+█                    GUIDE D'OPTIMISATION POWER BI                           █
+█                   Modèle de données professionnel                          █
+████████████████████████████████████████████████████████████████████████████████
+
+📋 ÉTAPE 1 : OUVRIR LE RAPPORT
+────────────────────────────────────────────────────────────────────────────────
+1. Ouvrir Power BI Desktop
+2. Fichier → Ouvrir → rapport_optimise.pbix
+3. Attendre le chargement complet
+
+📊 ÉTAPE 2 : VÉRIFIER LES DONNÉES
+────────────────────────────────────────────────────────────────────────────────
+1. Cliquer sur l'onglet "Données" (icône tableau)
+2. Vérifier les tables :
+   ✓ Proprietes (63 lignes) - Détails des annonces
+   ✓ Communes (41 lignes) - Synthèse par commune
+
+🔗 ÉTAPE 3 : CRÉER LA RELATION
+────────────────────────────────────────────────────────────────────────────────
+1. Onglet "Modèle" (icône 3 carrés reliés)
+2. Glisser-déposer :
+   Proprietes[Commune] → Communes[Commune]
+3. Configuration :
+   • Cardinalité : Plusieurs à un (*)→(1)
+   • Direction du filtre croisé : Unique
+   • Activer cette relation : ✓
+4. Cliquer "OK"
+
+📐 ÉTAPE 4 : AJOUTER LES MESURES DAX
+────────────────────────────────────────────────────────────────────────────────
+
+Cliquer sur "Nouvelle mesure" et copier-coller chaque mesure :
+
+1️⃣  Total Annonces = COUNTROWS(Proprietes)
+    Format : Nombre entier
+
+2️⃣  Prix Moyen = AVERAGE(Proprietes[Prix])
+    Format : Devise (€)
+
+3️⃣  Prix Minimum = MIN(Proprietes[Prix])
+    Format : Devise (€)
+
+4️⃣  Prix Maximum = MAX(Proprietes[Prix])
+    Format : Devise (€)
+
+5️⃣  Surface Moyenne = AVERAGE(Proprietes[Surface])
+    Format : Décimal, 1 chiffre
+
+6️⃣  Prix/m² Moyen = DIVIDE([Prix Moyen], [Surface Moyenne], 0)
+    Format : Nombre entier
+
+7️⃣  Communes Accessibles = CALCULATE(DISTINCTCOUNT(Communes[Commune]), Communes[BudgetFit] = 1)
+    Format : Nombre entier
+
+8️⃣  % Budget Accessible = DIVIDE([Communes Accessibles], DISTINCTCOUNT(Communes[Commune]), 0)
+    Format : Pourcentage, 1 décimale
+
+9️⃣  Rentabilité = DIVIDE(1000 * 12, [Prix/m² Moyen], 0) * 100
+    Format : Pourcentage, 2 décimales
+    Description : Si loyer = 1000€/mois
+
+🔟 Budget Restant = 130000 - [Prix Moyen]
+    Format : Devise (€)
+
+⚙️  ÉTAPE 5 : OPTIMISER LES TYPES DE DONNÉES
+────────────────────────────────────────────────────────────────────────────────
+
+Table Proprietes :
+• Prix → Devise fixe (€)
+• Surface → Nombre décimal
+• Pieces → Nombre entier
+• Date Publie → Date/Heure
+• URL → URL Web
+• DPE → Texte
+
+Table Communes :
+• Count → Nombre entier
+• AvgPrice, MinPrice, MaxPrice → Devise fixe (€)
+• AvgSurface → Nombre décimal
+• PricePerm2 → Nombre décimal
+• BudgetFit → Nombre entier (0/1)
+
+📊 ÉTAPE 6 : CRÉER LES HIÉRARCHIES
+────────────────────────────────────────────────────────────────────────────────
+
+Hiérarchie Géographique :
+1. Table Communes → Clic droit sur "Commune"
+2. "Créer une hiérarchie"
+3. Nom : "Hiérarchie Géographique"
+
+Hiérarchie Temporelle :
+1. Table Proprietes → Clic droit sur "Date Publie"
+2. "Créer une hiérarchie"
+3. Ajouter : Année → Trimestre → Mois → Jour
+
+🎨 ÉTAPE 7 : FORMATER LES COLONNES
+────────────────────────────────────────────────────────────────────────────────
+
+Prix (toutes tables) :
+• Format : € French (France)
+• Séparateur de milliers : espace
+• Sans décimales
+
+Surface :
+• Format : Décimal
+• 1 décimale
+• Suffixe : " m²"
+
+Prix/m² :
+• Format : Décimal
+• Sans décimales
+• Suffixe : " €/m²"
+
+⚡ ÉTAPE 8 : OPTIMISER LES PERFORMANCES
+────────────────────────────────────────────────────────────────────────────────
+
+1. Colonnes inutilisées :
+   • Cacher les colonnes techniques (ID, Rang)
+   
+2. Trier les tables :
+   • Communes : Trier par AvgPrice (ascendant)
+   • Proprietes : Trier par Date Publie (descendant)
+
+3. Catégories de données :
+   • Communes[Commune] → Ville
+   • Proprietes[URL] → URL Web
+   • Proprietes[Date Publie] → Date
+
+✅ ÉTAPE 9 : VALIDER LE MODÈLE
+────────────────────────────────────────────────────────────────────────────────
+
+1. Onglet "Modèle" :
+   ✓ Relation visible entre les tables
+   ✓ Ligne connectant Commune → Commune
+
+2. Onglet "Données" :
+   ✓ 10 mesures visibles dans le volet "Champs"
+   ✓ Icônes Σ à côté de chaque mesure
+
+3. Test :
+   • Créer un visuel "Carte"
+   • Glisser la mesure "Prix Moyen"
+   • Valeur attendue : ~283 486 €
+
+💾 ÉTAPE 10 : SAUVEGARDER
+────────────────────────────────────────────────────────────────────────────────
+
+1. Fichier → Enregistrer sous
+2. Nom : rapport_optimise_final.pbix
+3. ✓ Modèle de données optimisé prêt !
+
+════════════════════════════════════════════════════════════════════════════════
+⏱️  TEMPS ESTIMÉ : 10-15 minutes
+🎯 RÉSULTAT : Modèle professionnel avec 10 mesures DAX et relations optimales
+════════════════════════════════════════════════════════════════════════════════
+
+💡 CONSEIL PRO :
+Après ces étapes, vous pouvez créer les 12 graphiques recommandés dans le
+fichier GUIDE_12_GRAPHIQUES.md. Le modèle optimisé rendra la création des
+visuels beaucoup plus rapide et intuitive !
+

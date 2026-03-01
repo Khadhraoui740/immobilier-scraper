@@ -27,13 +27,24 @@ def main():
     print(" "*15 + "Ouverture automatique du rapport")
     print("="*70 + "\n")
     
-    # Utiliser rapport.pbix (le seul fichier valide)
+    # Chercher les fichiers PBIX (en priorité: rapport_complet_final > rapport.pbix)
     exports_dir = r"C:\Users\jaleleddinekhadhraou\immobilier-scraper\exports"
-    pbix_path = os.path.join(exports_dir, "rapport.pbix")
+    pbix_files = [
+        os.path.join(exports_dir, "rapport_complet_final.pbix"),
+        os.path.join(exports_dir, "rapport_complet.pbix"),
+        os.path.join(exports_dir, "rapport.pbix"),
+        os.path.join(exports_dir, "rapport_auto.pbix"),
+    ]
     
-    if not os.path.exists(pbix_path):
-        print("❌ Fichier rapport.pbix non trouvé dans exports/")
-        print("   Ce fichier est créé automatiquement par Power BI lors de la première utilisation")
+    pbix_path = None
+    for f in pbix_files:
+        if os.path.exists(f):
+            pbix_path = f
+            break
+    
+    if not pbix_path:
+        print("❌ Aucun fichier PBIX trouvé dans exports/")
+        print("   Fichiers attendus: rapport_complet.pbix, rapport.pbix")
         return False
     
     print(f"✅ Rapport trouvé")
